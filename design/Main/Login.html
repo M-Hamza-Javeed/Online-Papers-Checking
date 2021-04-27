@@ -1,0 +1,19 @@
+{% include "Main/assets/inc/head.html" %}
+
+<div class="Form-Container">
+  <div class="inner-form-holder">
+   <div class="form-heading" >Login</div>
+  <form action=""  method="POST" >
+    {% csrf_token %}
+    <div class="inner"><input type="Text" placeholder="Email" name="email" /></div>
+    <div class="inner"><input type="Text" placeholder="Password" name="password" /></div>
+    <div class="inner">
+      <input type="Submit" name="Submit" 
+      style="border: 0px;font-size: 22px;height:38px;background-color: #fff;color: #000;" value="Submit" />
+    </div>
+    </form>
+    </div>
+
+  </div>
+  {% include "Main/assets/inc/fotter.html" %}
+

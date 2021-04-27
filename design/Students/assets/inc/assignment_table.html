@@ -1,0 +1,45 @@
+<div class="dash-Card">
+<div class="dash-col col" style="width:97%;">
+<div class="col-heading tomato-color"><p>Assignment</p>
+<div style="display:flex; justify-content:space-between;align-items: center;">
+<div class="card-search">
+<i class="icon search-icon ion-ios-search-strong"></i>
+<input type="text" placeholder="Search Subject">
+</input></div>
+</div></div>
+
+<div>
+
+
+
+</div>
+
+
+<table class="dash-table"> 
+<thead> 
+<tr>
+    <th>ID</th><th>Courses</th>
+    <th>Teachers Name</th><th>Assignment</th>
+    <th>Take Assignment</th></tr></thead> 
+<tbody> 
+    {% for i in get_assignment %}
+    <tr>
+        <td>{{forloop.counter}}</td>
+        <td>{{i.subject}}</td>
+        <td>{{i.TeacherName}}</td>
+        <td>{{i.Pdate}}</td>
+        <td><button value="{{i.examid}}" class="exambtn" >View</button></td>
+    </tr>
+    {% endfor %}
+</tbody> 
+</table></div></div> 
+<script>
+    window.addEventListener('load',()=>{
+        document.querySelectorAll('.exambtn').forEach((element) => {
+        element.addEventListener('click',(item)=>{
+            window.location.href ='http://127.0.0.1:8000/Students/Forms/?examid='+item.target.value+"&req="+"assignment";
+        }); 
+        });
+    });
+</script>
+

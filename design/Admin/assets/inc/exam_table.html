@@ -1,0 +1,35 @@
+<div class="dash-Card">
+<div class="dash-col col" style="width:97%;">
+<div class="col-heading tomato-color"><p>Exams</p>
+<div style="display:flex; justify-content:space-between;align-items: center;width:max-content">
+<div class="card-search">
+<i class="icon search-icon ion-ios-search-strong"></i>
+<input type="text" placeholder="Search Exam">
+</input></div>
+</div></div><div></div>
+
+
+
+
+<table class="dash-table"> 
+<thead> 
+<tr>
+    <th>ID</th><th>Teachers Email</th><th>Exam ID</th>
+    <th>Date</th><th>Time</th><th>Time Duration</th></tr></thead> 
+<tbody> 
+    {% for item in Exams_table %}
+    <tr>
+        <td> {{ forloop.counter }}</td>
+        <td> {{ item.email.email }}</td>
+        <td> {{ item.examid }}</td>
+        <td> {{ item.pdate }}</td>
+        <td> {{ item.ptime }}</td>
+        <td> {{ item.time_duration }}</td>
+    </tr>
+    {% endfor %}
+</tbody> 
+</table></div>
+
+
+</div> 
+

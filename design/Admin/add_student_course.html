@@ -1,0 +1,68 @@
+{% include "Admin/assets/inc/Head.html" %}
+
+<link rel="stylesheet" type="text/css" href="assets/css/Forms.css" />
+
+<div class="dash-row row">
+
+    <div class="dash-col col" style="width:44%;height:max-content;min-width:300px;">
+        <div class="col-heading tomato-color">
+            <p style="margin:10px;">Student Courses</p>
+        </div>
+        <div class="col-body">
+
+                <form  method="POST" style="margin:20px" style="display: none;">
+                    {% csrf_token %}
+                    {% for field in form %}
+                    {{field}}
+                    {% endfor %}
+                    <div class="inner" ><input type="submit" class="papertype" name="Submit" 
+                    style="border: 0px;font-size: 22px;height:38px;background-color: #fff;color: #000;" value="Submit" /></div>
+                </form>
+                    
+        </div>
+    </div>
+    <div class="dash-col col" style="width:50%;height:max-content">
+
+
+        <div class="col-heading tomato-color">
+            <p>Courses</p>
+        </div>
+        <table class="dash-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>RegNo</th>
+                    <th>Course</th>
+                    <th>Delete</th>
+            </thead>
+            <tbody class="table-body">
+                {% for item in Student_Courses_table %}
+                <tr>
+                    <td> {{ forloop.counter }}</td>
+                    <td> {{ item.regno.regno }}</td>
+                    <td> {{ item.subject.subject }}</td>
+                    <td ><button style="width: 100px;height: 27px;background-color: #ff3535; margin-left:30px;border: 0px;color: #fff;font-size: 15px;" onclick="deletes(this)" value='{{ item.regno.regno }},{{ item.subject.subject }}' >Delete</button></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+
+
+</div>
+</diV>
+<script>
+    function deletes(item) {
+        if (confirm("Delete Row : " + item.value)) {
+            var csrftoken = '{{ csrf_token }}';
+            var data = "csrfmiddlewaretoken=" + csrftoken + "&req=delete_student_course&delete=" + item.value.split(',');
+            var xhr = new XMLHttpRequest();
+            xhr.addEventListener("readystatechange", function () { if (this.readyState === 4) { console.log(this.responseText); } });
+            xhr.open("POST", "http://127.0.0.1:8000/Admin/api/");
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.send(data);
+        }
+    }
+</script>
+{% include "Admin/assets/inc/Footer.html" %}

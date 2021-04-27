@@ -1,0 +1,185 @@
+{% load static %}
+<html>
+
+<head>
+    <title>Papers</title>
+    <link rel="stylesheet" href="{% static 'Students/assets/css/form_design.css' %}" />
+    <link rel="stylesheet" href="{% static 'Students/assets/css/ionicons.min.css' %}" />
+</head>
+
+<body>    
+    <div class="scroll">
+        <div class="Card">
+            <div class="Card-Heading">
+                <div class="inner-heading">
+                    <h1>{{Generate_Forms.title}}</h1>
+                    <p>{{Generate_Forms.TeacherName}}</p>
+                </div>
+            </div>
+            <div class="Card-Body">
+                <form method="POST" id='form-submit' enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="inner-Containner">
+                        {% for i in Generate_Forms.Paper %}
+
+                        {% if i.type == 'mcqs' %}
+                        <div class="qs mcqs">
+                            <div class="qs-inner">
+                                <div><span class="indexs">{{forloop.counter}}.</span>
+                                    <span class="mcqs-qs">{{i.mcqs}}</span>
+                                </div>
+                                <span class="Marks">Marks: {{i.point}}</span>
+                            </div>
+                            <div>
+                                <div>
+                                    <span><input required='' type="radio" name="q{{forloop.counter}}" value="{{i.choice1}}" /></span>
+                                    <span>{{i.choice1}}</span>
+                                </div>
+                                <div>
+                                    <span><input required='' type="radio" name="q{{forloop.counter}}" value="{{i.choice2}}" /></span>
+                                    <span>{{i.choice2}}</span>
+                                </div>
+                                <div>
+                                    <span><input required='' type="radio" name="q{{forloop.counter}}" value="{{i.choice3}}" /></span>
+                                    <span>{{i.choice3}}</span>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% if i.type == 'subjective' %}
+
+                        {% if i.submit == 1 %}
+                        <div class="qs subjective">
+                            <div class="qs-inner">
+                                <div><span>{{forloop.counter}}.</span>
+                                    <span class="question">{{i.question}}</span>
+                                </div>
+                                <span class="Marks">Marks: {{i.point}}</span>
+                            </div>
+                            <div><textarea class='type-not-upload qs-answer' required='' rows="8" cols="70"
+                                    placeholder="Enter your answer" style="resize:none"></textarea></div>
+                        </div>
+                        {% endif %}
+
+                        {% if i.submit == 0 %}
+                        <div class="qs subjective">
+                            <div class="qs-inner">
+                                <div><span>{{forloop.counter}}.</span>
+                                    <span class="question">{{i.question}}</span>
+                                </div>
+                                <span class="Marks">Marks: {{i.point}}</span>
+                            </div>
+                            <div class="qs">
+                                <div class="upload">
+                                    <input hidden='' accept="image/*" class='type-upload  qs-answer' required='' type="file"
+                                        id="upload{{forloop.counter}}">
+                                    <label class='uploadlabel' for="upload{{forloop.counter}}">
+                                        <span><i class="upload_icon icon ion-ios-cloud-upload-outline"></i></span>
+                                        <p>Upload File</p>
+                                    
+                                    </label>
+                                    </div>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% endif %}
+                        {% endfor %}
+                        <div>
+
+                <div class="Submit-Button"><input type="submit" value="Submit" /></div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="Card-Fotter">
+        <div>
+            <p>This content is created by the owner of the form.
+                The data you submit will be sent to the form owner.
+            </p>
+        </div>
+    </div>
+    </div>
+    <script>
+        document.getElementById('form-submit').addEventListener('submit', (item) => {
+            var mcqs = document.querySelectorAll('.mcqs');
+            var subjective = document.querySelectorAll('.subjective');
+            var _mcqs=[];var req={};var _subjective=[];
+
+            if(mcqs.length!=0){
+            mcqs.forEach((questions) => {
+                let qs = questions.querySelector('.mcqs-qs');
+                questions.children[1].querySelectorAll('input').forEach((options) => {
+                    if (options.checked) { _mcqs.push({ 'question': qs.textContent, "answer": options.value }) }
+                });
+            });
+            }
+
+            async function data(){
+            if(subjective.length!=0){
+                subjective.forEach((questions) => {
+                    let qs = questions.querySelector('.question');
+                    let answer = questions.querySelector('.qs-answer');
+
+                    if (answer.classList.contains('type-upload')) {
+                        let file = answer.files[0];
+                        upload_image(file,(name)=>{
+                        _subjective.push({ 'question': qs.textContent, 'type': 'type-upload', "answer": name });
+                        });
+                    }
+                    else {
+                        _subjective.push({ 'question': qs.textContent, 'type': 'type-not-upload', "answer": answer.value });
+                    }
+                });
+            }
+            let url=window.location.href
+            let search=new URL(url);
+            req={'subjective':_subjective,"mcqs":_mcqs,"req":search.searchParams.get('req'),"examid":search.searchParams.get('examid')};
+            await sleep(500);            
+            await submit_request(JSON.stringify(req),search.searchParams.get('req'));
+        }
+        data();
+        item.preventDefault();    
+});
+
+function sleep(ms) {return new Promise(resolve => setTimeout(resolve, ms));}
+
+
+function upload_image(file,cFunction) {
+var name;
+var data = new FormData();
+data.append("csrfmiddlewaretoken", "{{ csrf_token }}");
+data.append("file", file, file.name);
+data.append("req","noresponse");
+var xhr = new XMLHttpRequest();
+xhr.open("POST", "http://127.0.0.1:8000/ocr/api");
+xhr.addEventListener("readystatechange", function () {
+if (this.readyState === 4){
+name=JSON.parse(this.responseText).file.split('/')[2];
+cFunction(name);
+}
+});
+xhr.send(data);
+}
+
+
+
+function submit_request(req,reqfor){
+    var csrftoken="{{ csrf_token }}";
+    var xhr = new XMLHttpRequest();
+    var data = "csrfmiddlewaretoken=" + csrftoken + "&req="+reqfor+"&data=" + req
+    xhr.open("POST", "http://127.0.0.1:8000/Students/api/");
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.addEventListener("readystatechange", function () {
+    if (this.readyState === 4){
+        window.location.href=new URL(window.location.href).origin+'/Students/FormSubmitted/';
+    }
+    });
+    xhr.send(data);
+}
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,127 @@
+body{
+    font: menu;
+}
+
+.Card{
+    width:80%;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 1px 1px 5px #d7d7d7;
+    height: max-content;
+}
+.scroll{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.Card-Heading{
+    background-color: #03787c;
+    color: white;
+    margin-bottom:30px;
+    height: 180px;
+    box-shadow: 1px 2px 5px #dbdbdb;
+    padding: 25px 50px;
+}
+
+/* .Card .Card-Body, .Card-Heading{
+    ! padding-left:50px;
+} */
+
+.inner-Containner{
+padding:10px 40px;
+}
+.inner-heading h1{
+    font-size:40px;
+    margin-bottom:15px;
+}
+
+.qs{
+    margin-bottom:80px;
+    font-size:18px;
+}
+
+.qs-inner{
+    margin-bottom:25px;
+    display: flex;
+    justify-content: space-between;
+}
+/* .qs-inner + div span,input{
+    margin-bottom:15px !important;
+} */
+
+.uploadlabel{
+    display:flex;align-items:center;overflow: hidden;margin:10px;
+}
+
+textarea{
+resize: none;
+display: flex;
+padding: 10px;
+font: menu;
+font-size: 15px !important;
+width: -moz-available;
+}
+
+input{
+    margin:0px;
+}
+.inner-heading{
+    margin-top:40px;
+}
+span{
+    margin-right:15px;
+}
+
+.upload{
+
+    width: 160px;
+    background-color: #ddd;
+    height: 50px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.Submit-Button{
+    margin-top:120px;
+}
+
+.Submit-Button input:hover{
+    cursor: pointer;
+}
+
+.Submit-Button input{
+    width:150;
+    height: 50px;
+    background-color: #03787c;
+    color: #fff;
+    font-size: 20px;
+    border: 0px;
+    font: menu;
+    font-synthesis: style;
+    font-weight: lighter;
+    font-size: 22px;
+}
+
+.upload_icon{
+    font-size:20px;
+}
+
+.Card-Fotter{
+    display: flex;justify-content: center;background-color: #04797d;color: white;padding-top: 20px;padding-bottom: 10px;margin-top: 100px;
+}
+
+.Marks{
+    color: #575757;
+    font-size:15px;
+}
+
+.indexs{
+    color: #575757;
+    font-size:18px;
+    margin-right:20px;
+}

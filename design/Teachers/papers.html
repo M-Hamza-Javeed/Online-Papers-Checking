@@ -1,0 +1,474 @@
+{% include "Teachers/assets/inc/Head.html" %}
+
+
+<div class="dash-row row">
+
+      <div id="alertbox" style="display:none;width:100%;position: fixed;justify-content: center;align-items: center;height:75%;">
+      <div class="dash-col col" style="height: 100px; justify-content: center;">
+      <div class="col-heading tomato-color" style="margin-top: -20px;height:35%">
+      <p><i onclick="alertclose()" class="icon ion-close"></i></p></div>
+      <span style="display: flex;justify-content: center;"><p id="alerttext">paper generated</p></span>
+      </div></div>
+
+
+      <div class="dash-col col" style="width:44%;height:max-content;min-width:300px;">
+            <div class="col-heading tomato-color">
+                  <p style="margin:10px;">Paper</p>
+            </div>
+            <div class="col-body">
+
+                  <form method="POST" onsubmit="event.preventDefault()" style="margin:20px">                              
+                        <div class="inner">
+                              <select required style="width:520px;padding-left:17px;height:48px;border:0px;" name="Role">
+                                    <option value="MCQS">MCQS</option>
+                                    <option value="Subjective">Subjective</option>
+                                    <option value="Exam">Exam</option>
+                              </select>
+                        </div>
+
+                        <div class="inner">
+                              <select required style="width:100%;padding-left:17px;height:48px;border:0px;" id='courses'
+                                    name="Subject">
+                              </select>
+                        </div>
+
+                        <div class="inner"><input type="number" required minlength="1" placeholder="Paper time duration" id="Totaltime" /></div>
+                        <div class="inner"><input type="time" required placeholder="Starting time duration" id="Starttime" /></div>
+
+                        <div class="inner">
+                              <input type="submit" class="papertype" name="login_user"
+                                    style="border: 0px;font-size: 22px;height:38px;background-color: #fff;color: #000;"
+                                    value="Select" />
+                        </div>
+                  </form>
+            </div>
+      </div>
+
+
+
+      <div class="dash-row row">
+
+
+            <!-- MCQS BLOCK  --> 
+            <!--  MCQS BLOCK As a Quiz  --> 
+            <div class="MCQS" style="width:100%;display:flex;justify-content:space-between;flex-wrap: wrap;">
+                  <div class="dash-col col" style="width:43%;height:max-content;min-width:300px;">
+                        <div class="col-heading tomato-color">
+                              <p style="margin:10px;">MCQS</p>
+                        </div>
+                        <div class="col-body">
+
+                              <form method="POST" class="_MCQS" style="margin:20px">
+                                    <div class="inner"><input minlength="3" required type="Text" placeholder="Question" name="Question" />
+                                    </div>
+                                    <div class="inner">
+                                    <select id="mcqs_answer" style="width:100%;padding-left:17px;height:48px;border:0px;"  required type="Text" placeholder="Answer" name="Answer" >
+                                    </select>
+                                    
+                                    </div>
+
+                                    <div class="choices" style="padding:8px">
+                                          <div class="inner"><input minlength="1" required type="Text" placeholder="Choice A" name="Choice1" />
+                                          </div>
+                                          <div class="inner"><input minlength="1" required type="Text" placeholder="Choice B" name="Choice2" />
+                                          </div>
+                                          <div class="inner"><input minlength="1" required type="Text" placeholder="Choice C" name="Choice3" />
+                                          </div>
+                                    </div>
+
+                                    <div class="inner"><input minlength="1" type="number" required placeholder="Marks of Question"
+                                                name="Marks" /></div>
+                                    <div class="inner">
+                                          <input type="submit" class="papertype" name="login_user"
+                                                style="border: 0px;font-size: 22px;height:38px;background-color: #fff;color: #000;"
+                                                value="Add More" />
+                                    </div>
+                              </form>
+                        </div>
+                  </div>
+
+
+                  <div class="dash-col col" style="overflow:auto;background-color: #ff6347;width:52%;height:max-content;min-width:320px">
+                        <div class="col-heading tomato-color">
+                              <p>MCQS</p>
+                        </div>
+                        <table class="dash-table" style="background-color: rgb(247, 247, 247);">
+                              <thead><tr><th>Question</th><th>Choices</th><th>Answer</th><th>Marks</th></thead>
+                              <tbody id="_mcqs_body" ></tbody>
+                        </table>
+                        <div class="inner">
+                              <input type="button" class="papertype _mcsqs_req" name="login_user"
+                                    style="padding-left:-20px;border:0px;font-size:20px;width:150px;height:38px;background-color: #fff;color: #000;"
+                                    value="Upload" />
+                        </div>
+                  </div>
+            </div>
+
+
+
+            <!-- Subjective BLOCK  -->
+            <!--  MCQS BLOCK As a Quiz / Assignment  --> 
+            <div class="Subjective" style="width:100%;display:flex;justify-content:space-between;flex-wrap: wrap;">
+                  <div class="dash-col col" style="width:43%;height:max-content;min-width:300px;">
+                        <div class="col-heading tomato-color">
+                              <p style="margin:10px;">Subjective</p>
+                        </div>
+                        <div class="col-body">
+
+                              <form method="POST" id="_subjective" style="margin:20px">
+                                          <div class="inner"><input type="Text" placeholder="Question"
+                                                      name="Question" /></div>
+                                          <div class="inner"><input type="Text" placeholder="Answer" name="Answer" />
+                                          </div>
+                                          <div class="inner"><input required type="Text" placeholder="Key Words"
+                                                      name="Keywords" /></div>
+                                          <div class="inner"><input type="number" placeholder="Marks of Question"
+                                                      name="Marks" /></div>
+                                          <div class="inner">
+                                                <select required style="width:520px;padding-left:17px;height:42px;border:0px;" name="papertype">
+                                                      <option value="Quiz">As a Quiz</option>
+                                                      <option value="Assignment">As a Assignment</option>
+                                                </select>
+                                          </div>
+                                          <div class="inner">
+                                                <input type="submit" class="papertype" name="submit"
+                                                      style="border: 0px;font-size: 22px;height:38px;background-color: #fff;color: #000;"
+                                                      value="Add More" />
+                                          </div>
+                                    </form>
+                              
+
+                        </div>
+                  </div>
+
+
+                  <div class="dash-col col" style="width:52%;height:max-content;min-width:320px">
+                        <div class="col-heading tomato-color">
+                              <p>Subjective</p>
+                        </div>
+                        <table class="dash-table">
+                              <thead>
+                                    <tr>
+                                          <th>Question</th>
+                                          <th>Answer</th>
+                                          <th>Keywords</th>
+                                          <th>Marks</th>
+                                          <th>Type</th>
+                              </thead>
+                              <tbody id="_subjective_body"></tbody>
+                        </table>
+                        <div class="inner">
+                              <input type="button" class="papertype _subjective_req" name="login_user"
+                                    style="border: 0px;font-size:20px;width:150px;height:38px;background-color: #fff;color: #000;"
+                                    value="Upload" />
+                        </div>
+                  </div>
+            </div>
+
+
+
+            <!-- EXAM BLOCK  -->
+            <div class="Exam" style="width:100%;display:flex;justify-content:space-between;flex-wrap: wrap;">
+                  <div style="width:100%;display:flex;justify-content:space-between;flex-wrap: wrap;">
+                        <div class="dash-col col" style="width:43%;height:max-content;min-width:300px;">
+                              <div class="col-heading tomato-color">
+                                    <p style="margin:10px;">MCQS</p>
+                              </div>
+                              <div class="col-body">
+
+                                    <form method="POST" class="_MCQS" style="margin:20px">
+                                          <div class="inner"><input type="Text" placeholder="Question"
+                                                      name="Question" /></div>
+                                                      
+                                          <div class="inner">
+                                          <select id="exam_mcqs_answer" style="width:100%;padding-left:17px;height:48px;border:0px;" 
+                                          required="" type="Text" placeholder="Answer" name="Answer" >
+                                          </select>
+                                          </div>
+
+                                          <div class="exam_choices" style="padding:8px;">
+                                                <div class="inner"><input type="Text" placeholder="Choice A"
+                                                            name="Choice1" /></div>
+                                                <div class="inner"><input type="Text" placeholder="Choice B"
+                                                            name="Choice2" /></div>
+                                                <div class="inner"><input type="Text" placeholder="Choice C"
+                                                            name="Choice3" /></div>
+                                          </div>
+
+                                          <div class="inner"><input type="number" placeholder="Marks of Question"
+                                                      name="Marks" /></div>
+                                          <div class="inner">
+                                                <input type="submit" class="papertype" name="submit"
+                                                      style="border: 0px;font-size: 22px;height:38px;background-color: #fff;color: #000;"
+                                                      value="Add More" />
+                                          </div>
+                                    </form>
+                              </div>
+                        </div>
+
+
+
+
+                        <div class="dash-col col" style="width:52%;height:max-content;min-width:320px">
+                              <div class="col-heading tomato-color">
+                                    <p>MCQS</p>
+                              </div>
+                              <table class="dash-table">
+                                    <thead>
+                                          <tr>
+                                                <th>Question</th>
+                                                <th>Choices</th>
+                                                <th>Answer</th>
+                                                <th>Marks</th>
+                                    </thead>
+                                    <tbody id='_mcqs_body'>
+                                          
+                                    </tbody>
+                              </table>
+                        </div>
+                  </div>
+
+
+
+
+                  <!-- Subjective BLOCK  -->
+                  <div style="width:100%;display:flex;justify-content:space-between;flex-wrap: wrap;">
+                        <div class="dash-col col" style="width:43%;height:max-content;min-width:300px;">
+                              <div class="col-heading tomato-color">
+                                    <p style="margin:10px;">Subjective</p>
+                              </div>
+                              <div class="col-body">
+
+                                    <form method="POST" id="_subjective" style="margin:20px">
+                                          <div class="inner"><input type="Text" placeholder="Question"
+                                                      name="Question" /></div>
+                                          <div class="inner"><input type="Text" placeholder="Answer" name="Answer" />
+                                          </div>
+                                          <div class="inner"><input required type="Text" placeholder="Key Words"
+                                                      name="Keywords" /></div>
+                                          <div class="inner"><input type="number" placeholder="Marks of Question"
+                                                      name="Marks" /></div>
+                                          <div class="inner">
+                                                <select required style="width:520px;padding-left:17px;height:42px;border:0px;" name="papertype">
+                                                      <option value="Online">Online</option>
+                                                      <option value="Handwriten">Handwriten</option>
+                                                </select>
+                                          </div>
+                                          <div class="inner">
+                                                <input type="submit" class="papertype" name="submit"
+                                                      style="border: 0px;font-size: 22px;height:38px;background-color: #fff;color: #000;"
+                                                      value="Add More" />
+                                          </div>
+                                    </form>
+                              </div>
+                        </div>
+
+
+                        <div class="dash-col col" style="width:52%;height:max-content;min-width:320px">
+                              <div class="col-heading tomato-color">
+                                    <p>Subjective</p>
+                              </div>
+                              <table class="dash-table">
+                                    <thead>
+                                          <tr>
+                                                <th>Question</th>
+                                                <th>Answer</th>
+                                                <th>Keywords</th>
+                                                <th>Marks</th>
+                                                <th>Paper Type</th>
+
+                                    </thead>
+                                    <tbody id="_subjective_body" ></tbody>
+                              </table>
+                              <div class="inner">
+                                    <input type="button" class="papertype _exam_req" name="login_user"
+                                          style="border: 0px;font-size:20px;width:150px;height:38px;background-color: #fff;color: #000;"
+                                          value="Upload Paper" />
+                              </div>
+                        </div>
+                  </div>
+            </div>
+      </div>
+
+
+
+      <script>
+            var tag = '{% for i in courses %}{{i.subject}},{% endfor %}';
+            console.log(tag)
+            var courses = document.getElementById("courses");
+            var course=document.getElementById('courses');
+
+            window.addEventListener('load', () => { 
+                  data = tag.split(',');
+                  data.forEach((item) => {
+                        if (item != "") {
+                              var node = document.createElement('option');
+                              node.textContent = item;
+                              node.setAttribute('value', item);
+                              courses.append(node);
+                        }
+                        
+            });
+
+            document.getElementsByClassName('choices')[0].querySelectorAll('input').forEach((item)=>{
+                  item.addEventListener('change',(node)=>{
+                  var mcqs_answer=document.getElementById('mcqs_answer');
+
+                  if (mcqs_answer.length >0){
+                  var el=(mcqs_answer.namedItem(item.name));
+                  if (el!=null){mcqs_answer.removeChild(mcqs_answer.namedItem(item.name));}
+                  }
+
+
+                  var items=document.createElement('option');
+                  items.textContent=node.target.value;
+                  items.setAttribute('value',node.target.value);
+                  items.setAttribute('name',node.target.name);
+                  mcqs_answer.append(items);
+                  });
+            }); 
+            
+            document.getElementsByClassName('exam_choices')[0].querySelectorAll('input').forEach((item)=>{
+                  item.addEventListener('change',(node)=>{
+                  var mcqs_answer=document.getElementById('exam_mcqs_answer');
+
+                  if (mcqs_answer.length >0){
+                  var el=(mcqs_answer.namedItem(item.name));
+                  if (el!=null){mcqs_answer.removeChild(mcqs_answer.namedItem(item.name));}
+                  }
+
+
+                  var items=document.createElement('option');
+                  items.textContent=node.target.value;
+                  items.setAttribute('value',node.target.value);
+                  items.setAttribute('name',node.target.name);
+                  mcqs_answer.append(items);
+                  });
+            });    
+
+
+
+
+
+
+                  document.querySelectorAll('._MCQS').forEach((item)=>{
+                  item.addEventListener('submit',(item)=>{
+                  var form=item.target;var data=[];
+                  console.log(item.target);
+                  var Tbody=item.target.parentElement.parentElement.parentElement.querySelector('#_mcqs_body');
+                  var tr=document.createElement('tr'); 
+
+                  data.push(form.Question.value);
+                  data.push(form.Choice1.value+","+form.Choice2.value+","+form.Choice3.value);
+                  data.push(form.Answer.value);data.push(form.Marks.value);
+                  if(validation(data)){
+                  data.forEach((item)=> {
+                        var node = document.createElement('td');
+                        node.textContent = item;
+                        tr.append(node)
+                  });
+                  Tbody.append(tr);}
+                  event.preventDefault();
+                  });
+                  });
+            
+
+                  document.getElementsByClassName('_mcsqs_req')[0].addEventListener('click',(item)=>{
+                        var table=item.target.parentElement.parentElement.children[1];var _td=[];var tr=[];
+                        table.children[1].querySelectorAll('tr').forEach((item)=>{
+                              item.childNodes.forEach((td)=>{
+                                    _td.push(td.textContent);
+                              });
+                              tr.push(_td);_td=[];                           
+                        }); 
+                        var i={"courses":course.value};tr.push(i);
+                        requests(tr,"mcqs");
+                  });
+
+
+
+                  
+                  document.querySelectorAll('#_subjective').forEach((item)=>{
+                  item.addEventListener('submit',(item)=>{
+                  var form=item.target;var data=[];
+                  var Tbody=item.target.parentElement.parentElement.parentElement.querySelector('#_subjective_body');
+                  var tr=document.createElement('tr'); 
+
+                  data.push(form.Question.value);data.push(form.Answer.value); 
+                  data.push(form.Keywords.value);data.push(form.Marks.value);
+                  data.push(form.papertype.value);
+
+                  data.forEach((item)=> {
+                        var node = document.createElement('td');
+                        node.textContent = item;tr.append(node) 
+                  });Tbody.append(tr);
+                  console.log(tr);
+                  event.preventDefault();
+            });
+      });
+
+            
+                  document.getElementsByClassName('_subjective_req')[0].addEventListener('click',(item)=>{
+                        var table=item.target.parentElement.parentElement.children[1];var _td=[];var tr=[];
+                        table.children[1].querySelectorAll('tr').forEach((item)=>{
+                              item.childNodes.forEach((td)=>{
+                                    _td.push(td.textContent);
+                              });
+                              tr.push(_td);_td=[];                           
+                        }); 
+                        var i={"courses":course.value};tr.push(i);
+                        requests(tr,"subjective");
+                  });
+
+                  document.getElementsByClassName('_exam_req')[0].addEventListener('click',(item)=>{
+                        var exam=document.getElementsByClassName('Exam')[0];var _td=[];var tr=[];var _tr=[];
+                        var mcqs=exam.querySelectorAll('tbody')[0];
+                        var question=exam.querySelectorAll('tbody')[1];
+                        var Starttime=document.getElementById('Starttime').value;
+                        var Totaltime=document.getElementById('Totaltime').value;
+
+                        mcqs.querySelectorAll('tr').forEach((item)=>{
+                        item.childNodes.forEach((td)=>{_td.push(td.textContent);});
+                        tr.push(_td);_td=[];
+                        }); 
+                        question.querySelectorAll('tr').forEach((item)=>{
+                        item.childNodes.forEach((td)=>{_td.push(td.textContent);});
+                        _tr.push(_td);_td=[];
+                        }); 
+                        var i={"email":'{{head.email}}',"Totaltime":Totaltime,"Starttime":Starttime,"courses":course.value,"question":_tr,"mcqs":tr};
+                        requests(i,"exam");
+                  });
+                  
+            });
+
+
+      function requests(tr,reqfor) {
+            if (tr.length < 2) {
+                  alertmessage(reqfor,"error no data");
+            }
+            else{
+            var csrftoken = '{{ csrf_token }}';
+            var data = "csrfmiddlewaretoken=" + csrftoken + "&req="+reqfor+"&data=" + JSON.stringify(tr);
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "http://127.0.0.1:8000/Teachers/api/");
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.addEventListener("readystatechange", function () { 
+            if (this.readyState === 4) { 
+                  alertmessage(reqfor,"generated");
+            } 
+            });
+
+            xhr.send(data);
+      }
+}
+
+      function alertmessage(reqfor,message){
+            document.getElementById('alertbox').style.display="flex";
+            document.getElementById('alerttext').textContent=reqfor+" "+message;
+      }
+      function validation(data){var flag=true;data.forEach((item)=>{if(item.length<1){ flag=false; }});return flag;}
+      function alertclose(){document.getElementById('alertbox').style.display="none";}
+
+
+</script>
+{% include "Teachers/assets/inc/Footer.html" %}

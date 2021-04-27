@@ -1,0 +1,39 @@
+<div class="dash-Card">
+<div class="dash-col col" style="width:97%;">
+<div class="col-heading tomato-color"><p>Result</p>
+<div style="display:flex; justify-content:space-between;align-items: center;width:max-content;">
+<div class="card-search">
+<i class="icon search-icon ion-ios-search-strong"></i>
+<input type="text" placeholder="Search Result">
+</input></div>
+</div></div>
+
+<div>
+
+
+
+</div>
+
+
+<table class="dash-table" style="width: 100%;"> 
+<thead> 
+<tr>
+    <th style="min-width:30%;" >ID</th>
+    <th style="min-width:30%;">Subject</th>
+    <th style="min-width:20%;">Marks</th>
+    <th style="min-width:30%;">Percentage</th></tr></thead> 
+<tbody> 
+    {% for i in result_table %}
+    <tr>
+    <td style="min-width:30%;">{{forloop.counter}}</td>
+    <td style="min-width:30%;">{{i.subject}}</td>
+    <td style="min-width:20%;">{{i.marks}}</td>
+    <td style="min-width:30%;">{{i.percentage}}%</td>   
+    </tr>
+    {% endfor %}
+</tbody> 
+</table></div>
+
+
+</div> 
+

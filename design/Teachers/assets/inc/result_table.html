@@ -1,0 +1,37 @@
+<div class="dash-Card">
+<div class="dash-col col" style="width:97%;">
+<div class="col-heading tomato-color"><p>Result</p>
+<div style="display:flex; justify-content:space-between;align-items: center;width:max-content;">
+<div class="card-search">
+<i class="icon search-icon ion-ios-search-strong"></i>
+<input type="text" placeholder="Search Result">
+</input></div>
+</div></div>
+
+<div>
+
+
+
+</div>
+
+
+<table class="dash-table"> 
+<thead><tr><th>ID</th><th>Name</th><th>RegNo</th><th>Date</th><th>GPA</th><th>GPA</th></tr></thead> 
+<tbody> 
+    {% for item in Result_table %}
+    <tr>
+        <td> {{ forloop.counter }}</td>
+        <td> {{ item.4 }}</td>
+        <td> {{ item.1 }}</td>
+        <td> {{ item.7 }}</td>
+        <td> {{ item.2 }}</td>
+        <td> {{ item.3 }}</td>
+        </td>
+    </tr>
+    {% endfor %}
+</tbody> 
+</table></div>
+
+
+</div> 
+

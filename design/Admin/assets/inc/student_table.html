@@ -1,0 +1,128 @@
+<div class="dash-Card" style="position:fixed;width:80%;display:none;">
+    <div class="dash-col col" style="width:70%;">
+        <div class="col-heading purple-color">
+            <p>Students</p> <i class="close icon ion-close-circled"></i>
+        </div>
+        <div style="background-color:#000;">
+
+            <form method="POST" style="margin:20px">
+                {% csrf_token %}
+                <div class="inner"><input type="Text" placeholder="Enter Student Name" name="name" /></div>
+                <div class="inner"><input type="Text" placeholder="Enter Student RegNo" name="regno" /></div>
+                <div class="inner"><input type="Text" placeholder="Enter Student Password" name="password" /></div>
+                <div class="inner"><input type="date" name="sdate" /></div>
+                <div class="inner">
+                    <input type="submit" class="papertype" name="Submit"
+                        style="border: 0px;font-size: 22px;height:38px;background-color: #fff;color: #000;"
+                        value="Submit" />
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+<div class="dash-Card">
+    <div class="dash-col col" style="width:97%;">
+        <div class="col-heading tomato-color">
+            <p>Students</p>
+            <div style="display:flex; justify-content:space-between;align-items: center;width: 400px;">
+                <div style="display:flex;align-items:center;">
+
+                    <div class="open" style="cursor:pointer;">
+                        <i class="icon ion-plus-round"></i><span style="font-size:18px;font-weight:bold;color:#fff">Add
+                            Student</span>
+                    </div>
+                </div>
+
+
+                <div class="card-search">
+                    <i class="icon search-icon ion-ios-search-strong"></i>
+                    <input type="text" placeholder="Search Subject">
+                    </input>
+                </div>
+            </div>
+        </div>
+
+        <div>
+
+
+
+        </div>
+
+        
+        <table class="dash-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>RegNo</th>
+                    <th>Password</th>
+                    <th>Delete</th>
+                    <th>Update</th>
+                </tr>
+            </thead>
+            <tbody class="table-body">
+                {% for item in Students_table %}
+                <tr>
+                    <td> {{ forloop.counter }}</td>
+                    <td> {{ item.name }}</td>
+                    <td> {{ item.regno }}</td>
+                    <td> {{ item.password }}</td>
+                    <td><button onclick="deletes(this)" value={{ item.regno }}>Delete</button></td>
+                    <td><button onclick="Updates(this)" value={{ item.regno }}>Update</button>
+                        <button style="display:none;" onclick="Submit(this)" value={{ item.regno }}>Submit</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+
+</div>
+
+<script>
+    var regno = null;
+    function deletes(item) {
+        if (confirm("Delete Row : " + item.value)) {
+            var csrftoken = '{{ csrf_token }}';
+            var data = "csrfmiddlewaretoken=" + csrftoken + "&req=Sdelete&regno=" + item.value;
+            var xhr = new XMLHttpRequest();
+            xhr.addEventListener("readystatechange", function () { if (this.readyState === 4) { console.log(this.responseText); } });
+            xhr.open("POST", "http://127.0.0.1:8000/Admin/api/");
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.send(data);
+        }
+    }
+
+    function Updates(item) {
+        regno = item.value;
+        for (var i = 1; i <= 4; i++) {
+            item.parentElement.parentElement.cells[i].contentEditable = true;
+        }
+        item.parentElement.children[0].style.display = 'none';
+        item.parentElement.children[1].style.display = '';
+    }
+
+    function Submit(item) {
+        var data = [];
+        for (var i = 0; i <= 4; i++) { data.push(item.parentElement.parentElement.cells[i].innerText); }
+        for (var i = 1; i <= 4; i++) { item.parentElement.parentElement.cells[i].contentEditable = false; }
+        item.parentElement.children[0].style.display = ''; item.parentElement.children[1].style.display = 'none';
+        console.log(data);
+        if (confirm("Update Row : " + regno)) {
+            var csrftoken = '{{ csrf_token }}';
+            var data = "csrfmiddlewaretoken=" + csrftoken + "&pk=" + regno + "&req=Supdate&name=" + data[1] + "&regno=" + data[2]+ "&password=" + data[3];
+            var xhr = new XMLHttpRequest();
+            xhr.addEventListener("readystatechange", function () { if (this.readyState === 4) { console.log(this.responseText); } });
+            xhr.open("POST", "http://127.0.0.1:8000/Admin/api/");
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.send(data);
+        }
+    }
+
+</script>

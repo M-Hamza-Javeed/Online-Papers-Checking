@@ -1,0 +1,18 @@
+{% include "Main/assets/inc/head.html" %}
+
+<div class="Form-Container">
+  <div class="inner-form-holder">
+   <div class="form-heading">Contact Us</div>
+
+<form method="POST">
+{% csrf_token %}
+{% for field in form %}
+<div class="inner">{{ field }}</div>
+{% endfor %}
+<div class="inner"><input type="Submit" name="Submit" class="form-btn" value="Submit" />
+</div>
+</form>
+</div>
+</div>
+
+  {% include "Main/assets/inc/fotter.html" %}

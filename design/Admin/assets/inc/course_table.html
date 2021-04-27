@@ -1,0 +1,79 @@
+<style> #id_email , #id_subject{width:100%;height:40px;}</style>
+<div class="dash-Card" style="position:fixed;width:80%;display:none;">
+<div class="dash-col col" style="width:70%;">
+<div class="col-heading purple-color"><p>Courses</p> <i class="close icon ion-close-circled"></i></div>
+<div style="background-color:#000;">
+<form  method="POST" style="margin:20px" style="display: none;">
+{% csrf_token %}
+{% for field in form %}
+<div class="inner">{{ field }}</div>
+{% endfor %}
+<input type="submit" class="papertype" name="Submit" 
+style="border: 0px;font-size: 22px;height:38px;background-color: #fff;color: #000;" value="Submit" /></div>
+</form>
+
+
+</div>
+</div>
+</div>
+
+
+
+
+
+
+
+<div class="dash-Card">
+<div class="dash-col col" style="width:97%;">
+<div class="col-heading tomato-color"><p>Courses</p>
+<div style="display:flex; justify-content:space-between;align-items: center;width: 400px;">
+<div style="display:flex;align-items:center;">
+<div class="open" style="cursor:pointer;">
+<i class="icon ion-plus-round"></i>
+<span style="font-size:18px;font-weight:bold;color:#fff">Add Course</span></div></div>
+<div class="card-search">
+<i class="icon search-icon ion-ios-search-strong"></i>
+<input type="text" placeholder="Search Subject">
+</input></div>
+</div></div><div></div>
+
+
+
+
+<table class="dash-table"> 
+<thead> 
+<tr>
+    <th>ID</th><th>Courses</th>
+    <th>Teachers Name</th><th>Teachers Email</th>
+    <th>Delete</th></thead> 
+<tbody> 
+    {% for item in Assign_courses %}
+    <tr>
+        <td> {{ forloop.counter }}</td>
+        <td> {{ item.subject.subject }}</td>
+        <td> {{ item.name }}</td>
+        <td> {{ item.email.email }}</td>
+        <td><button onclick="deletes(this)" accessKey='{{ item.subject.subject }}' value='{{ item.email.email }}'>Delete</button></td>
+    </tr>
+    {% endfor %}
+</tbody> 
+</table></div></div> 
+<script>
+    window.addEventListener('load',()=>{
+        document.getElementById('id_name').placeholder="Enter Teacher Name";
+    });
+
+    var email = null; var subject=null;
+    function deletes(item) { console.log(item);
+        if (confirm("Delete Row : " + item.value)) {
+            var csrftoken = '{{ csrf_token }}';
+            var data = "csrfmiddlewaretoken=" + csrftoken + "&req=Cdelete&email=" + item.value+"&subject="+item.accessKey;
+            var xhr = new XMLHttpRequest();
+            xhr.addEventListener("readystatechange", function () { if (this.readyState === 4) { console.log(this.responseText); } });
+            xhr.open("POST", "http://127.0.0.1:8000/Admin/api/");
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.send(data);
+        }
+    }
+
+</script>

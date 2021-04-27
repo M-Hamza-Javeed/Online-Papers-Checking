@@ -1,0 +1,32 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Papers</title>
+	<link rel="stylesheet" href="{% static 'Teachers/assets/css/Forms.css' %}">
+  <style>
+  .Form-Container{ height: 100%;width:100%;flex-direction: column;display: flex;position: absolute;justify-content: center;}
+  .inner-form-holder{padding: 50px 40px;}
+  form{ margin-top:20px; }
+  </style> 
+</head>
+<body id="page-top" style="margin:0px">
+
+<div class="Form-Container">
+  <div style="display: flex;justify-content: center;">
+  <div class="inner-form-holder">
+   <div style="font-size:50px;color:#fff;display:flex;justify-content:center;">{{title}}</div>
+    <form action="" method="POST">
+    {% csrf_token %}
+    <div class="inner"><input type="Text" placeholder="Enter Your RegNo" name="regno"></div>
+    <div class="inner"><input type="Text" placeholder="Password" name="password"></div>
+    <div class="inner"><input type="Submit" name='login_user' style="padding:0px;border:0px;width: 522px;font-size:20px;height:50px;background-color: #f0525e;color:#fff;" value="Login">
+    </div>
+    </form>
+	</div>
+</div>
+</div>
+</body>
+</html>

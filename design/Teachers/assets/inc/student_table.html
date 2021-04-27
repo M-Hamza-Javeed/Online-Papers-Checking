@@ -1,0 +1,36 @@
+<div class="dash-Card">
+<div class="dash-col col" style="width:97%;">
+<div class="col-heading tomato-color"><p>Students</p>
+<div style="display:flex; justify-content:space-between;align-items: center;width:max-content;">
+<div class="card-search">
+<i class="icon search-icon ion-ios-search-strong"></i>
+<input type="text" placeholder="Search Subject">
+</input></div>
+</div></div>
+
+<div>
+
+
+
+</div>
+
+
+<table class="dash-table"> 
+<thead> 
+<tr>
+    <th>ID</th><th>Name</th>
+    <th>RegNo</th><th>Password</th>
+    </tr></thead> 
+<tbody class="table-body">
+    {% for item in Students_table %}
+    <tr>
+        <td> {{ forloop.counter }}</td>
+        <td> {{ item.name }}</td>
+        <td> {{ item.regno }}</td>
+        <td> {{ item.password }}</td>
+    </tr>
+    {% endfor %}
+</tbody> 
+</table></div>
+</div> 
+

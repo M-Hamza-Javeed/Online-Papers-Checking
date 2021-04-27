@@ -1,0 +1,32 @@
+<div class="dash-Card">
+<div class="dash-col col" style="width:97%;">
+<div class="col-heading tomato-color"><p>Courses</p>
+<div style="display:flex; justify-content:space-between;align-items: center;">
+<div class="card-search">
+<i class="icon search-icon ion-ios-search-strong"></i>
+<input type="text" placeholder="Search Subject"></input></div>
+</div></div>
+
+
+<table class="dash-table" style="width:100%;"> 
+<thead> 
+<tr>
+    <th style="min-width:30%;" >Courses</th>
+    <th style="min-width:30%;" >Student Name</th>
+    <th style="min-width:30%;">RegNo</th>
+    <th style="min-width:30%;" >Credit Hours</th></thead> 
+<tbody> 
+{% for i in RegisterSubject %}
+<tr>
+    <td style="min-width:30%;">{{i.subject.subject}}</td>
+    <td style="min-width:30%;">{{i.regno.name}}</td>
+    <td style="min-width:30%;">{{i.regno.regno}}</td>
+    <td style="min-width:30%;">{{i.subject.credit_hours}}</td>
+</tr>
+{% endfor %}
+</tbody> 
+</table></div>
+
+
+</div> 
+

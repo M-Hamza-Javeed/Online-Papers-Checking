@@ -1,0 +1,36 @@
+<div class="dash-Card">
+<div class="dash-col col" style="width:97%;">
+<div class="col-heading tomato-color"><p>Courses</p>
+<div style="display:flex; justify-content:space-between;align-items: center;">
+<div class="card-search">
+<i class="icon search-icon ion-ios-search-strong"></i>
+<input type="text" placeholder="Search Subject">
+</input></div>
+</div></div>
+
+<div>
+
+
+</div>
+
+
+<table class="dash-table"> 
+<thead> 
+<tr>
+    <th>ID</th><th>Courses</th>
+    <th>Teachers Name</th><th>Teachers Email</th></tr></thead> 
+<tbody> 
+    {% for item in Assign_courses %}
+    <tr>
+        <td> {{ forloop.counter }}</td>
+        <td> {{ item.subject.subject }}</td>
+        <td> {{ item.name }}</td>
+        <td> {{ item.email.email }}</td>
+    </tr>
+    {% endfor %}
+</tbody> 
+</table></div>
+
+
+</div> 
+
