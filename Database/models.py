@@ -153,14 +153,18 @@ class Questions(models.Model):
 
 
 class ResultStubject(models.Model):
-    regno = models.ForeignKey('Student', models.DO_NOTHING, db_column='RegNo')  
-    subject = models.CharField(db_column='Subject', max_length=50)  
-    marks = models.IntegerField(db_column='Marks')  
-    percentage = models.IntegerField(db_column='Percentage')  
+    regno    = models.ForeignKey('Student', models.DO_NOTHING, db_column='RegNo')  
+    subject  = models.ForeignKey('Courses', models.DO_NOTHING, db_column='Subject')  
+    uniqueid = models.ForeignKey(quiz_assignment_id,models.DO_NOTHING,db_column='Uniqueid',blank=True,null=True)  
+    Examid   = models.ForeignKey(Exam, models.DO_NOTHING, db_column='Examid', blank =True,null=True)
+    marks    = models.FloatField(db_column='Marks')
+    tmarks   = models.FloatField(db_column='Total_Marks')  
+    percentage = models.FloatField(db_column='Percentage')  
 
     class Meta:
         db_table = 'result_stubject'
-        unique_together = (('regno', 'subject'),)
+        unique_together = (('regno', 'subject','uniqueid','Examid','marks','tmarks','percentage'),)
+
 
 
 class ResultStudent(models.Model):

@@ -14,8 +14,8 @@ class OCR(APIView):
     def post(self, request, *args, **kwargs):
         data = nlp(data=request.data)
         if data.is_valid():
-            simalarity(data.data['String_1'],data.data['String_2'])
-            return Response(data.data, status=status.HTTP_201_CREATED)
+            output=simalarity(data.data['String_1'],data.data['String_2'])
+            return Response({"Input Data ":data.data,"Ouput Data":output}, status=status.HTTP_201_CREATED)
         else:
             return Response(data.errors, status=status.HTTP_400_BAD_REQUEST)
     

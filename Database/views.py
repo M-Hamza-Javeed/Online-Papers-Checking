@@ -16,6 +16,8 @@ import collections
 from django.conf import settings
 import json
 import os
+from nlp.nlp import simalarity
+
 
 
 def validations(request):
@@ -584,29 +586,36 @@ def _process_form(request,regno):
     elif req=="quiz":
         _examid=quiz_assignment_id.objects.filter(uniqueid=request['examid'])[0]
 
-        for i in _mcqs:
-            _mquestion=Mcqs.objects.filter(mquestion=i['question'])[0]
-            _mc=StudentMcqs(manswer=i['answer'],uniqueid=_examid,mquestion=_mquestion,regno=_regno).save()
-        
-        for i in __subjective_not_upload:
-            _mquestion=Questions.objects.filter(question=i['question'])[0]
-            _questions=StudentAnswer(question=_mquestion,answer=i['answer'],uniqueid=_examid,regno=_regno).save()
-        
+        try:
+            for i in _mcqs:
+                _mquestion=Mcqs.objects.filter(mquestion=i['question'])[0]
+                _mc=StudentMcqs(manswer=i['answer'],uniqueid=_examid,mquestion=_mquestion,regno=_regno).save()
+        except:
+            pass
+
+        try:
+            for i in __subjective_not_upload:
+                _mquestion=Questions.objects.filter(question=i['question'])[0]
+                _questions=StudentAnswer(question=_mquestion,answer=i['answer'],uniqueid=_examid,regno=_regno).save()
+        except:
+            pass
+
         Calculate_Papers(_examid,"quiz")
 
 
 
     elif req=='assignment':
         _examid=quiz_assignment_id.objects.filter(uniqueid=request['examid'])[0]
-        for i in __subjective_not_upload:
-            _mquestion=Questions.objects.filter(question=i['question'])[0]
-            _questions=StudentAnswer(question=_mquestion,answer=i['answer'],uniqueid=_examid,regno=_regno).save()
+        try:
+            for i in __subjective_not_upload:
+                _mquestion=Questions.objects.filter(question=i['question'])[0]
+                _questions=StudentAnswer(question=_mquestion,answer=i['answer'],uniqueid=_examid,regno=_regno).save()
+        except:
+            pass
         
         Calculate_Papers(_examid,"assignment")
     
     return True
-
-
 
 
 
@@ -619,51 +628,77 @@ def Calculate_Papers(_examid,req):
         StdAns=ExamStudentAnswer.objects.filter(Examid=_examid).values()
         McqsAns=ExamStudentMcqs.objects.filter(Examid=_examid).values()
         ScanAnswers=ExamScanPaper.objects.filter(examid=_examid).values()
+        StdAns_Marks=0;McqsAns_Marks=0;ScanAnswers_MarK=0
         
         for i in StdAns:
             question=ExamQuestions.objects.filter(question=i['question_id']).values('question','keywords','answer','point')[0]
             for key in question: subjective[str(key)]=str(question[key])
-            subjective["Student_Answer"]=i['answer']
-        
+            subjective["Student_Answer"]=i['answer'];
+            Per_keyword_Mark=[ i for i in question['keywords'].split(',') if i != ""]
+            subjective["Per_keyword_Mark"]=question['point']/len(Per_keyword_Mark)
+            subjective["sim"]=simalarity(subjective['answer'],subjective["Student_Answer"])
+            StdAns_Marks = StdAns_Marks+Calculate_Papers_Process(subjective,"subj")
+        print("Exam Marks ->",StdAns_Marks)
+
+
         for i in ScanAnswers:
             question=ExamQuestions.objects.filter(question=i['question_id']).values('question','keywords','answer','point')[0]
             for key in question: subjective[str(key)]=str(question[key])
             subjective["Student_Answer"]=i['answer']
+            Per_keyword_Mark=[ i for i in question['keywords'].split(',') if i != ""]
+            subjective["Per_keyword_Mark"]=question['point']/len(Per_keyword_Mark)
+            subjective["sim"]=simalarity(subjective['answer'],subjective["Student_Answer"])
+            ScanAnswers_MarK = ScanAnswers_MarK+Calculate_Papers_Process(subjective,"subj")
+        print("Exam Handwritten -> ",ScanAnswers_MarK)
+
 
         for i in McqsAns:
             question=ExamMcqs.objects.filter(mquestion=i['mquestion_id']).values('mquestion','manswer','point')[0]
             for key in question: mcqs[str(key)]=str(question[key])
-            mcqs["Student_Answer"]=i['manswer']
+            mcqs["Student_Answer"]=i['manswer'];
+            McqsAns_Marks = McqsAns_Marks+Calculate_Papers_Process(mcqs,"mcqs")
+        print("Exam MCQS -> ",McqsAns_Marks)
 
-        data["mcqs"]=mcqs;data["subjective"]=subjective;
-
-        print(data)
+        # data["mcqs"]=mcqs;data["subjective"]=subjective;
 
     elif req ==  "quiz":
         sub_quiz=StudentAnswer.objects.filter(uniqueid=_examid).values()
         mcqs_quiz=StudentMcqs.objects.filter(uniqueid=_examid).values()
+        Sub_quiz_Marks=0;Mcqs_quiz_Marks=0
         
         for i in sub_quiz:
             question=Questions.objects.filter(question=i['question_id']).values('question','keywords','answer','point')[0]
             for key in question: subjective[str(key)]=str(question[key])
             subjective["Student_Answer"]=i['answer']
+            Per_keyword_Mark=[ i for i in question['keywords'].split(',') if i != ""]
+            subjective["Per_keyword_Mark"]=question['point']/len(Per_keyword_Mark)
+            subjective["sim"]=simalarity(subjective['answer'],subjective["Student_Answer"])
+            Sub_quiz_Marks = Sub_quiz_Marks+Calculate_Papers_Process(subjective,"subj")
+        print("Quiz Marks -> ",Sub_quiz_Marks)
+
 
         for i in mcqs_quiz:
             _mquestion=Mcqs.objects.filter(mquestion=i['mquestion_id']).values('mquestion','manswer','point')[0]
             for key in _mquestion: mcqs[str(key)]=str(_mquestion[key])
             mcqs["Student_Answer"]=i['manswer']
+            Mcqs_quiz_Marks = Mcqs_quiz_Marks+Calculate_Papers_Process(mcqs,"mcqs")
+        print("Quiz Marks -> ",Mcqs_quiz_Marks)
         
-        data["mcqs"]=mcqs; data["subjective"]=subjective;
-        print(data)
+
 
     elif req ==  "assignment":
+        Assignment_Marks=0
         assignment=StudentAnswer.objects.filter(uniqueid=_examid).values()
     
         for i in assignment:
             question=Questions.objects.filter(question=i['question_id']).values('question','keywords','answer','point')[0]
             for key in question: subjective[str(key)]=str(question[key])
             subjective["Student_Answer"]=i['answer']
-            print(subjective)            
+            Per_keyword_Mark=[ i for i in question['keywords'].split(',') if i != ""]
+            subjective["Per_keyword_Mark"]=question['point']/len(Per_keyword_Mark)
+            subjective["sim"]=simalarity(subjective['answer'],subjective["Student_Answer"])
+            Assignment_Marks = Assignment_Marks+Calculate_Papers_Process(subjective,"subj")
+        print("Assignment Marks ->> ",Assignment_Marks)            
 
 
 
@@ -672,7 +707,76 @@ def Calculate_Papers(_examid,req):
 
 
 
+def _NER(sent1,sent2):
+    ner_found=0;
+    if len(sent1['NER']) > 0 and len(sent2['NER'])>0:
+        for ner in sent1['NER']:
+            if ner in sent2['NER']:
+                ner_found=ner_found+1
+        print("Total NER -> ",len(sent1['NER']),"NER Found -> ",ner_found)
+        return len(sent1['NER']),ner_found
+    else:
+        return 0,0
 
+
+def _NER_MARKS(_ner,points):
+    if _ner[0] > 0 and _ner[1] > 0:
+        marks=(_ner[1]/_ner[0]*100)*(_ner[0]/100)
+        return marks*15/100
+    else:
+        return 0
+
+
+def Calculate_Papers_Process(data,req):
+    word2vec=0;jaccard_sim=0;Student_Answer=data['Student_Answer'];
+    sentence=False;error=0;keyword_marks=0;jaccard_sim_marks=0
+    print(data)
+
+    if req == "subj":
+        word2vec=data['sim']['Word2vec_sim'];error=data['sim']['sen2']['error']
+        jaccard_sim=jaccard_sim_marks=data['sim']['jaccard_sim']
+
+        if data['keywords'] != "":
+            keywords= [re.sub("[^a-zA-z+$+\d]"," ", token.lower())  for token in (data['keywords']).split(',')] 
+            Answer_Keywords= [re.sub("[^a-zA-z+$+\d]"," ", token.lower())   for token in Student_Answer.split()]
+
+
+            for keyword in keywords:
+                if keyword != "":
+                    if keyword in Answer_Keywords:
+                        keyword_marks=keyword_marks+data['Per_keyword_Mark']
+            jaccard_sim_marks=(jaccard_sim_marks*int(data['point'])-((data['sim']['sen2']['error']*data['Per_keyword_Mark'])*0.5))
+        else:
+            jaccard_sim_marks=(jaccard_sim_marks*int(data['point'])-(data['sim']['sen2']['error']*0.5))
+        
+        _ner=_NER(data['sim']['lingustic_features_sent1'],data['sim']['lingustic_features_sent2'])
+
+        print("keyword_marks     -> "   ,   keyword_marks ," Empty-space will not be consider ")
+        print("Answer_Keywords   -> "   ,   Answer_Keywords)
+        print("Question_keywords -> "   ,   keywords)
+        print("Per_keyword_Marks -> "   ,   data['Per_keyword_Mark'])
+
+        if data['sim']['stopwords']: 
+            keyword_marks = keyword_marks
+        else: 
+            keyword_marks = keyword_marks * (70/100)
+
+
+        if keyword_marks <= (int(data['point'])*(60/100)):
+            marks=_NER_MARKS(_ner,int(data['point']))
+            if data['sim']['jaccard_sim']  > 0.7:  marks=marks+(int(data['point'])*15/100)
+            if data['sim']['Word2vec_sim'] > 0.7:  marks=marks+(int(data['point'])*10/100)                           
+            return keyword_marks+marks
+        else:
+            return keyword_marks
+
+
+    if req == "mcqs":
+        print(data)
+        if data['manswer'] == data['Student_Answer']:
+            return int(data['point'])
+        else:
+            return 0
 
 
 
