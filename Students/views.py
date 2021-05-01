@@ -105,7 +105,7 @@ def Papers(request):
 def Forms(request):
     data=Auth(request)
     if data:
-        Generate_Form=Generate_Forms(request.GET['examid'],request.GET['req'])
+        Generate_Form=Generate_Forms(request.GET['examid'],request.GET['req'],data[1]['regno'])
         print(Generate_Form)
         if Generate_Form['Valid']:
             return render(request,'Students/Exam.html',{"Generate_Forms":Generate_Form})

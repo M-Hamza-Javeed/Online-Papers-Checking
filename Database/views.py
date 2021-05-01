@@ -386,12 +386,12 @@ def _get_question(id):
     return Questions.objects.filter(uniqueid=id).values()
 
 '''is form is submitted before'''
-def ISForm_Submitted(_examid,req):
+def ISForm_Submitted(_examid,req,_regno):
     if req == "papers":
         exam=get_examid(_examid)
-        _ExamStudentAnswer = ExamStudentAnswer.objects.filter(Examid=exam['examid']).count()
-        _ExamStudentMcqs =ExamStudentMcqs.objects.filter(Examid=exam['examid']).count()
-        _ExamScanPaper =ExamScanPaper.objects.filter(examid=exam['examid']).count()
+        _ExamStudentAnswer = ExamStudentAnswer.objects.filter(Examid=exam['examid'],regno=_regno).count()
+        _ExamStudentMcqs =ExamStudentMcqs.objects.filter(Examid=exam['examid'],regno=_regno).count()
+        _ExamScanPaper =ExamScanPaper.objects.filter(examid=exam['examid'],regno=_regno).count()
         print(_ExamStudentAnswer,_ExamStudentMcqs,_ExamScanPaper)
         if _ExamStudentAnswer > 0 or _ExamStudentMcqs > 0 or _ExamScanPaper >0:
             return True
@@ -403,11 +403,11 @@ def ISForm_Submitted(_examid,req):
             _mcqs_exam=get_quiz_mcqs_id(_examid);_question_exam=get_quiz_question_id(_examid)
 
             if _mcqs_exam != None:
-                _StudentMcqs=StudentMcqs.objects.filter(uniqueid=_mcqs_exam['uniqueid']).count()
-                _StudentAnswer=StudentAnswer.objects.filter(uniqueid=_mcqs_exam['uniqueid']).count()
+                _StudentMcqs=StudentMcqs.objects.filter(uniqueid=_mcqs_exam['uniqueid'],regno=_regno).count()
+                _StudentAnswer=StudentAnswer.objects.filter(uniqueid=_mcqs_exam['uniqueid'],regno=_regno).count()
 
             if _question_exam != None:
-                _StudentAnswer=StudentAnswer.objects.filter(uniqueid=_question_exam['uniqueid']).count()
+                _StudentAnswer=StudentAnswer.objects.filter(uniqueid=_question_exam['uniqueid'],regno=_regno).count()
 
                     
             if _StudentMcqs > 0 or _StudentAnswer > 0:
@@ -417,9 +417,9 @@ def ISForm_Submitted(_examid,req):
 
 
 
-def Generate_Forms(examid,req):
+def Generate_Forms(examid,req,regno):
     
-    if not ISForm_Submitted(examid,req):
+    if not ISForm_Submitted(examid,req,regno):
 
         if req == "papers": 
             exam=get_examid(examid);Paper=[];Mcqs=[];Subjective=[];
@@ -682,9 +682,9 @@ def Calculate_Papers(_examid,req,_regno,_course):
     data=collections.defaultdict(str);
 
     if req=="paper":
-        StdAns=ExamStudentAnswer.objects.filter(Examid=_examid).values()
-        McqsAns=ExamStudentMcqs.objects.filter(Examid=_examid).values()
-        ScanAnswers=ExamScanPaper.objects.filter(examid=_examid).values()
+        StdAns=ExamStudentAnswer.objects.filter(Examid=_examid,regno=_regno).values()
+        McqsAns=ExamStudentMcqs.objects.filter(Examid=_examid,regno=_regno).values()
+        ScanAnswers=ExamScanPaper.objects.filter(examid=_examid,regno=_regno).values()
         StdAns_Marks=0;McqsAns_Marks=0;ScanAnswers_MarK=0;obtainMarks=0;Papers_Total_Marks=0
 
         for i in StdAns:
@@ -725,8 +725,8 @@ def Calculate_Papers(_examid,req,_regno,_course):
 
 
     elif req ==  "quiz":
-        sub_quiz=StudentAnswer.objects.filter(uniqueid=_examid).values()
-        mcqs_quiz=StudentMcqs.objects.filter(uniqueid=_examid).values()
+        sub_quiz=StudentAnswer.objects.filter(uniqueid=_examid,regno=_regno).values()
+        mcqs_quiz=StudentMcqs.objects.filter(uniqueid=_examid,regno=_regno).values()
         Sub_quiz_Marks=0;Mcqs_quiz_Marks=0;quiz_obtain_marks=0;Quiz_Total_Marks=0
         
         for i in sub_quiz:
@@ -740,6 +740,7 @@ def Calculate_Papers(_examid,req,_regno,_course):
             Sub_quiz_Marks = Sub_quiz_Marks+Calculate_Papers_Process(subjective,"subj")
         print("Quiz Marks -> ",Sub_quiz_Marks)
 
+        
 
         for i in mcqs_quiz:
             _mquestion=Mcqs.objects.filter(mquestion=i['mquestion_id']).values('mquestion','manswer','point')[0]
@@ -747,7 +748,10 @@ def Calculate_Papers(_examid,req,_regno,_course):
             mcqs["Student_Answer"]=i['manswer']
             Quiz_Total_Marks=Quiz_Total_Marks+int(_mquestion['point'])
             Mcqs_quiz_Marks = Mcqs_quiz_Marks+Calculate_Papers_Process(mcqs,"mcqs")
-        print("Quiz Marks -> ",Mcqs_quiz_Marks)
+            print(i)
+            print()
+            print(int(_mquestion['point']))
+        print("Quiz Marks -> ",Mcqs_quiz_Marks , "Quiz total Marks ", Quiz_Total_Marks)
         
         quiz_obtain_marks=Sub_quiz_Marks+Mcqs_quiz_Marks
         ResultStubject_create(_examid,req,_regno,_course,quiz_obtain_marks,Quiz_Total_Marks)
@@ -755,8 +759,7 @@ def Calculate_Papers(_examid,req,_regno,_course):
 
 
     elif req ==  "assignment":
-        Assignment_Marks=0
-        assignment=StudentAnswer.objects.filter(uniqueid=_examid).values()
+        assignment=StudentAnswer.objects.filter(uniqueid=_examid,regno=_regno).values()
         assignment_Total_Marks=0;Assignment_Marks=0
     
         for i in assignment:
@@ -803,7 +806,6 @@ def _NER_MARKS(_ner,points):
 def Calculate_Papers_Process(data,req):
     word2vec=0;jaccard_sim=0;Student_Answer=data['Student_Answer'];
     sentence=False;error=0;keyword_marks=0;jaccard_sim_marks=0
-    print(data)
 
     if req == "subj":
         word2vec=data['sim']['Word2vec_sim'];error=data['sim']['sen2']['error']
@@ -845,7 +847,6 @@ def Calculate_Papers_Process(data,req):
 
 
     if req == "mcqs":
-        print(data)
         if data['manswer'] == data['Student_Answer']:
             return int(data['point'])
         else:
