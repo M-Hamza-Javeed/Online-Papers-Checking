@@ -105,9 +105,16 @@ def Papers(request):
 def Forms(request):
     data=Auth(request)
     if data:
-        return render(request,'Students/Exam.html',{"Generate_Forms":Generate_Forms(request.GET['examid'],request.GET['req'])})
+        Generate_Form=Generate_Forms(request.GET['examid'],request.GET['req'])
+        print(Generate_Form)
+        if Generate_Form['Valid']:
+            return render(request,'Students/Exam.html',{"Generate_Forms":Generate_Form})
+        else:
+            return redirect("/Students/FormSubmitted/")
     else:
         return redirect("/Students/Signin/")
+
+
 
 def FormSubmitted(request):
     data=Auth(request)

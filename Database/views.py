@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.db import connection,transaction
 from Database.forms import Assign_Course,Admin_Auth,Student_Auth,_ContactUs,\
     Teacher_Auth,Add_Course,Exams,_Mcqs,_StudentSubject
@@ -17,6 +17,7 @@ from django.conf import settings
 import json
 import os
 from nlp.nlp import simalarity
+
 
 
 
@@ -384,65 +385,104 @@ def _get_mcqs(id):
 def _get_question(id):
     return Questions.objects.filter(uniqueid=id).values()
 
-
-def Generate_Forms(examid,req):
-    if req == "papers": 
-        exam=get_examid(examid);Paper=[];Mcqs=[];Subjective=[];
-        _subjective=ExamQuestions.objects.filter(examid=exam['examid']).values(); 
-        _Mcqs=ExamMcqs.objects.filter(examid=exam['examid']).values()
-        TeacherName=Teacher.objects.filter(email=exam['email_id'])[0].name
-        
-        if len(_Mcqs)>0:   
-            for item in _Mcqs:
-                ch=get_mcqschoice(item['mquestion'])["choice"].split(',')
-                Paper.append({"mcqs":item["mquestion"],"type":"mcqs","choice1":ch[0],"choice2":ch[1],"choice3":ch[2],"point":item["point"]})
-            Title=_Mcqs[0]["subject"]
-        if len(_subjective)>0:
-            for item in _subjective:
-                Paper.append({"question":item["question"],"submit":item["submit"],"type":"subjective","point":item["point"]})
-            Title=_subjective[0]["subject"]
+'''is form is submitted before'''
+def ISForm_Submitted(_examid,req):
+    if req == "papers":
+        exam=get_examid(_examid)
+        _ExamStudentAnswer = ExamStudentAnswer.objects.filter(Examid=exam['examid']).count()
+        _ExamStudentMcqs =ExamStudentMcqs.objects.filter(Examid=exam['examid']).count()
+        _ExamScanPaper =ExamScanPaper.objects.filter(examid=exam['examid']).count()
+        print(_ExamStudentAnswer,_ExamStudentMcqs,_ExamScanPaper)
+        if _ExamStudentAnswer > 0 or _ExamStudentMcqs > 0 or _ExamScanPaper >0:
+            return True
         else:
-            Title = ''
-        return {"Paper":Paper,"title":Title,"TeacherName":TeacherName}
+            return False
 
     elif req == "quiz" or req == "assignment":
-        _mcqs_exam=get_quiz_mcqs_id(examid);_question_exam=get_quiz_question_id(examid)
-        question_exam=create_quiz_assignment_id();mcqs_exam=create_quiz_assignment_id()
+            _StudentMcqs=0;_StudentAnswer=0
+            _mcqs_exam=get_quiz_mcqs_id(_examid);_question_exam=get_quiz_question_id(_examid)
+
+            if _mcqs_exam != None:
+                _StudentMcqs=StudentMcqs.objects.filter(uniqueid=_mcqs_exam['uniqueid']).count()
+                _StudentAnswer=StudentAnswer.objects.filter(uniqueid=_mcqs_exam['uniqueid']).count()
+
+            if _question_exam != None:
+                _StudentAnswer=StudentAnswer.objects.filter(uniqueid=_question_exam['uniqueid']).count()
+
+                    
+            if _StudentMcqs > 0 or _StudentAnswer > 0:
+                return True
+            else:
+                return False
+
+
+
+def Generate_Forms(examid,req):
     
+    if not ISForm_Submitted(examid,req):
 
-        if _mcqs_exam != None:
-            mcqs_exam=_mcqs_exam
-        else:
-            mcqs_exam=''
-
-        if _question_exam != None:
-            question_exam=_question_exam
-        else:
-            question_exam=''
-        
-
-        if mcqs_exam !='':
-            Paper=[];Mcqs=[];Subjective=[];print(mcqs_exam,question_exam)
-            _Mcqs=_get_mcqs(mcqs_exam['uniqueid']);
-
-            if len(_Mcqs)>0 and mcqs_exam['req']=="mcqs":
-                TeacherName=Teacher.objects.filter(email=mcqs_exam['email_id'])[0].name   
+        if req == "papers": 
+            exam=get_examid(examid);Paper=[];Mcqs=[];Subjective=[];
+            _subjective=ExamQuestions.objects.filter(examid=exam['examid']).values(); 
+            _Mcqs=ExamMcqs.objects.filter(examid=exam['examid']).values()
+            TeacherName=Teacher.objects.filter(email=exam['email_id'])[0].name
+            
+            if len(_Mcqs)>0:   
                 for item in _Mcqs:
-                    ch=get_mcqschoice_quiz(item['mquestion'])["choice"].split(',')
+                    ch=get_mcqschoice(item['mquestion'])["choice"].split(',')
                     Paper.append({"mcqs":item["mquestion"],"type":"mcqs","choice1":ch[0],"choice2":ch[1],"choice3":ch[2],"point":item["point"]})
                 Title=_Mcqs[0]["subject"]
-                print(Paper)
-                return {"Paper":Paper,"title":Title,"TeacherName":TeacherName}
-        
-        if question_exam !='':
-            Paper=[];Mcqs=[];Subjective=[];print(mcqs_exam,question_exam)
-            _subjective=_get_question(question_exam['uniqueid']);
             if len(_subjective)>0:
-                TeacherName=Teacher.objects.filter(email=question_exam['email_id'])[0].name   
-                for item in _subjective: 
-                    Paper.append({"question":item["question"],"submit":1,"type":"subjective","point":item["point"]})
+                for item in _subjective:
+                    Paper.append({"question":item["question"],"submit":item["submit"],"type":"subjective","point":item["point"]})
                 Title=_subjective[0]["subject"]
-                return {"Paper":Paper,"title":Title,"TeacherName":TeacherName}
+            else:
+                Title = ''
+            return {"Paper":Paper,"title":Title,"TeacherName":TeacherName,"Valid":True}
+
+        elif req == "quiz" or req == "assignment":
+            _mcqs_exam=get_quiz_mcqs_id(examid);_question_exam=get_quiz_question_id(examid)
+            question_exam=create_quiz_assignment_id();mcqs_exam=create_quiz_assignment_id()
+        
+
+            if _mcqs_exam != None:
+                mcqs_exam=_mcqs_exam
+            else:
+                mcqs_exam=''
+
+            if _question_exam != None:
+                question_exam=_question_exam
+            else:
+                question_exam=''
+            
+
+            if mcqs_exam !='':
+                Paper=[];Mcqs=[];Subjective=[];print(mcqs_exam,question_exam)
+                _Mcqs=_get_mcqs(mcqs_exam['uniqueid']);
+
+                if len(_Mcqs)>0 and mcqs_exam['req']=="mcqs":
+                    TeacherName=Teacher.objects.filter(email=mcqs_exam['email_id'])[0].name   
+                    for item in _Mcqs:
+                        ch=get_mcqschoice_quiz(item['mquestion'])["choice"].split(',')
+                        Paper.append({"mcqs":item["mquestion"],"type":"mcqs","choice1":ch[0],"choice2":ch[1],"choice3":ch[2],"point":item["point"]})
+                    Title=_Mcqs[0]["subject"]
+                    print(Paper)
+                    return {"Paper":Paper,"title":Title,"TeacherName":TeacherName,"Valid":True}
+            
+            if question_exam !='':
+                Paper=[];Mcqs=[];Subjective=[];print(mcqs_exam,question_exam)
+                _subjective=_get_question(question_exam['uniqueid']);
+                if len(_subjective)>0:
+                    TeacherName=Teacher.objects.filter(email=question_exam['email_id'])[0].name   
+                    for item in _subjective: 
+                        Paper.append({"question":item["question"],"submit":1,"type":"subjective","point":item["point"]})
+                    Title=_subjective[0]["subject"]
+                    return {"Paper":Paper,"title":Title,"TeacherName":TeacherName,"Valid":True}
+    else :
+        return {"Valid":False} 
+
+
+
 
 
 
@@ -705,7 +745,7 @@ def Calculate_Papers(_examid,req,_regno,_course):
             _mquestion=Mcqs.objects.filter(mquestion=i['mquestion_id']).values('mquestion','manswer','point')[0]
             for key in _mquestion: mcqs[str(key)]=str(_mquestion[key])
             mcqs["Student_Answer"]=i['manswer']
-            Quiz_Total_Marks=Quiz_Total_Marks+int(question['point'])
+            Quiz_Total_Marks=Quiz_Total_Marks+int(_mquestion['point'])
             Mcqs_quiz_Marks = Mcqs_quiz_Marks+Calculate_Papers_Process(mcqs,"mcqs")
         print("Quiz Marks -> ",Mcqs_quiz_Marks)
         

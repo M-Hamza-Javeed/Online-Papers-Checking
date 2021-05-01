@@ -163,7 +163,10 @@ class ResultStubject(models.Model):
 
     class Meta:
         db_table = 'result_stubject'
-        unique_together = (('regno', 'subject','uniqueid','Examid','marks','tmarks','percentage'),)
+        unique_together = (
+        ('regno', 'subject','uniqueid','marks'),
+        ('regno', 'subject','Examid','marks'),
+        )
 
 
 
