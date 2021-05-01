@@ -18,19 +18,26 @@
 <table class="dash-table" style="width: 100%;"> 
 <thead> 
 <tr>
-    <th style="min-width:30%;" >ID</th>
-    <th style="min-width:30%;">Subject</th>
-    <th style="min-width:20%;">Marks</th>
-    <th style="min-width:30%;">Percentage</th></tr></thead> 
+    <th  >ID</th>
+    <th >Subject</th>
+    <th >Teacher Name</th>
+    <th >Type</th>
+    <th >Marks</th>
+    <th >Total Marks</th>
+    <th >Percentage</th></tr></thead> 
 <tbody> 
     {% for i in result_table %}
     <tr>
-    <td style="min-width:30%;">{{forloop.counter}}</td>
-    <td style="min-width:30%;">{{i.subject}}</td>
-    <td style="min-width:20%;">{{i.marks}}</td>
-    <td style="min-width:30%;">{{i.percentage}}%</td>   
+    <td >{{forloop.counter}}</td><td >{{i.subject.subject}}</td>
+
+    {% if i.uniqueid != None %}<td >{{i.uniqueid.email.name}}</td><td >{{i.uniqueid.req}}</td>{% endif %}
+    {% if i.Examid != None %}<td >{{i.Examid.email.name}}</td><td >Paper</td>{% endif %}
+
+    <td >{{i.marks}}</td><td >{{i.tmarks}}</td><td >{{i.percentage}}%</td>   
     </tr>
     {% endfor %}
+
+    
 </tbody> 
 </table></div>
 
