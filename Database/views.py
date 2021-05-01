@@ -542,12 +542,14 @@ def student_assignments(_regno):
     return _assignment
     
 
+
+
 def _process_form(request,regno):
-    __subjective_not_upload=[];_subjective_upload=[];req=request['req']
+    __subjective_not_upload=[];_subjective_upload=[];_data=[];req=request['req']
     [__subjective_not_upload.append(i) if i['type']=='type-not-upload' else _subjective_upload.append(i) for i in request['subjective']]
-    _mcqs=request['mcqs'];_regno=Student.objects.filter(regno=regno)[0]
-    
-    _data=[]
+    _mcqs=request['mcqs'];
+    _regno=Student.objects.filter(regno=regno)[0]
+    _course=Courses.objects.filter(subject=request['subject'])[0]
     
 
     if req=="papers":
@@ -581,7 +583,7 @@ def _process_form(request,regno):
                 return False
 
         ''' Calculate Paper '''
-        Calculate_Papers(_examid,"paper")
+        Calculate_Papers(_examid,"paper",_regno,_course)
 
     elif req=="quiz":
         _examid=quiz_assignment_id.objects.filter(uniqueid=request['examid'])[0]
@@ -600,7 +602,7 @@ def _process_form(request,regno):
         except:
             pass
 
-        Calculate_Papers(_examid,"quiz")
+        Calculate_Papers(_examid,"quiz",_regno,_course)
 
 
 
@@ -613,13 +615,28 @@ def _process_form(request,regno):
         except:
             pass
         
-        Calculate_Papers(_examid,"assignment")
+        Calculate_Papers(_examid,"assignment",_regno,_course)
     
     return True
 
 
+def ResultStubject_create(_id,_req,_regno,_course,_obtain_marks,_total_marks):
+    if   _req == "paper":
+        _percentage=(_obtain_marks/_total_marks)*100
+        ResultStubject(regno=_regno,subject=_course,Examid=_id,uniqueid=None,
+        marks=_obtain_marks,tmarks=_total_marks,percentage=_percentage).save()
+    elif _req == "quiz":
+        _percentage=(_obtain_marks/_total_marks)*100
+        ResultStubject(regno=_regno,subject=_course,Examid=None,uniqueid=_id,
+        marks=_obtain_marks,tmarks=_total_marks,percentage=_percentage).save()
+    elif _req == "assignment":
+        _percentage=(_obtain_marks/_total_marks)*100
+        ResultStubject(regno=_regno,subject=_course,Examid=None,uniqueid=_id,
+        marks=_obtain_marks,tmarks=_total_marks,percentage=_percentage).save()
 
-def Calculate_Papers(_examid,req):
+
+
+def Calculate_Papers(_examid,req,_regno,_course):
     mcqs=collections.defaultdict(str);
     subjective=collections.defaultdict(str);
     data=collections.defaultdict(str);
@@ -628,8 +645,8 @@ def Calculate_Papers(_examid,req):
         StdAns=ExamStudentAnswer.objects.filter(Examid=_examid).values()
         McqsAns=ExamStudentMcqs.objects.filter(Examid=_examid).values()
         ScanAnswers=ExamScanPaper.objects.filter(examid=_examid).values()
-        StdAns_Marks=0;McqsAns_Marks=0;ScanAnswers_MarK=0
-        
+        StdAns_Marks=0;McqsAns_Marks=0;ScanAnswers_MarK=0;obtainMarks=0;Papers_Total_Marks=0
+
         for i in StdAns:
             question=ExamQuestions.objects.filter(question=i['question_id']).values('question','keywords','answer','point')[0]
             for key in question: subjective[str(key)]=str(question[key])
@@ -637,6 +654,7 @@ def Calculate_Papers(_examid,req):
             Per_keyword_Mark=[ i for i in question['keywords'].split(',') if i != ""]
             subjective["Per_keyword_Mark"]=question['point']/len(Per_keyword_Mark)
             subjective["sim"]=simalarity(subjective['answer'],subjective["Student_Answer"])
+            Papers_Total_Marks=Papers_Total_Marks+int(question['point'])
             StdAns_Marks = StdAns_Marks+Calculate_Papers_Process(subjective,"subj")
         print("Exam Marks ->",StdAns_Marks)
 
@@ -648,6 +666,7 @@ def Calculate_Papers(_examid,req):
             Per_keyword_Mark=[ i for i in question['keywords'].split(',') if i != ""]
             subjective["Per_keyword_Mark"]=question['point']/len(Per_keyword_Mark)
             subjective["sim"]=simalarity(subjective['answer'],subjective["Student_Answer"])
+            Papers_Total_Marks=Papers_Total_Marks+int(question['point'])
             ScanAnswers_MarK = ScanAnswers_MarK+Calculate_Papers_Process(subjective,"subj")
         print("Exam Handwritten -> ",ScanAnswers_MarK)
 
@@ -656,15 +675,19 @@ def Calculate_Papers(_examid,req):
             question=ExamMcqs.objects.filter(mquestion=i['mquestion_id']).values('mquestion','manswer','point')[0]
             for key in question: mcqs[str(key)]=str(question[key])
             mcqs["Student_Answer"]=i['manswer'];
+            Papers_Total_Marks=Papers_Total_Marks+int(question['point'])
             McqsAns_Marks = McqsAns_Marks+Calculate_Papers_Process(mcqs,"mcqs")
         print("Exam MCQS -> ",McqsAns_Marks)
 
-        # data["mcqs"]=mcqs;data["subjective"]=subjective;
+        obtainMarks=StdAns_Marks+ScanAnswers_MarK+McqsAns_Marks
+        ResultStubject_create(_examid,req,_regno,_course,obtainMarks,Papers_Total_Marks)
+
+
 
     elif req ==  "quiz":
         sub_quiz=StudentAnswer.objects.filter(uniqueid=_examid).values()
         mcqs_quiz=StudentMcqs.objects.filter(uniqueid=_examid).values()
-        Sub_quiz_Marks=0;Mcqs_quiz_Marks=0
+        Sub_quiz_Marks=0;Mcqs_quiz_Marks=0;quiz_obtain_marks=0;Quiz_Total_Marks=0
         
         for i in sub_quiz:
             question=Questions.objects.filter(question=i['question_id']).values('question','keywords','answer','point')[0]
@@ -673,6 +696,7 @@ def Calculate_Papers(_examid,req):
             Per_keyword_Mark=[ i for i in question['keywords'].split(',') if i != ""]
             subjective["Per_keyword_Mark"]=question['point']/len(Per_keyword_Mark)
             subjective["sim"]=simalarity(subjective['answer'],subjective["Student_Answer"])
+            Quiz_Total_Marks=Quiz_Total_Marks+int(question['point'])
             Sub_quiz_Marks = Sub_quiz_Marks+Calculate_Papers_Process(subjective,"subj")
         print("Quiz Marks -> ",Sub_quiz_Marks)
 
@@ -681,14 +705,19 @@ def Calculate_Papers(_examid,req):
             _mquestion=Mcqs.objects.filter(mquestion=i['mquestion_id']).values('mquestion','manswer','point')[0]
             for key in _mquestion: mcqs[str(key)]=str(_mquestion[key])
             mcqs["Student_Answer"]=i['manswer']
+            Quiz_Total_Marks=Quiz_Total_Marks+int(question['point'])
             Mcqs_quiz_Marks = Mcqs_quiz_Marks+Calculate_Papers_Process(mcqs,"mcqs")
         print("Quiz Marks -> ",Mcqs_quiz_Marks)
         
+        quiz_obtain_marks=Sub_quiz_Marks+Mcqs_quiz_Marks
+        ResultStubject_create(_examid,req,_regno,_course,quiz_obtain_marks,Quiz_Total_Marks)
+
 
 
     elif req ==  "assignment":
         Assignment_Marks=0
         assignment=StudentAnswer.objects.filter(uniqueid=_examid).values()
+        assignment_Total_Marks=0;Assignment_Marks=0
     
         for i in assignment:
             question=Questions.objects.filter(question=i['question_id']).values('question','keywords','answer','point')[0]
@@ -697,8 +726,12 @@ def Calculate_Papers(_examid,req):
             Per_keyword_Mark=[ i for i in question['keywords'].split(',') if i != ""]
             subjective["Per_keyword_Mark"]=question['point']/len(Per_keyword_Mark)
             subjective["sim"]=simalarity(subjective['answer'],subjective["Student_Answer"])
+            assignment_Total_Marks=assignment_Total_Marks+int(question['point'])
             Assignment_Marks = Assignment_Marks+Calculate_Papers_Process(subjective,"subj")
-        print("Assignment Marks ->> ",Assignment_Marks)            
+        print("Assignment Marks ->> ",Assignment_Marks)
+
+        ResultStubject_create(_examid,req,_regno,_course,Assignment_Marks,assignment_Total_Marks)
+            
 
 
 
