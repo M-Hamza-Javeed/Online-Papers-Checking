@@ -16,22 +16,39 @@
 
 
 <table class="dash-table"> 
-<thead><tr><th>ID</th><th>Name</th><th>RegNo</th><th>Date</th><th>GPA</th><th>GPA</th></tr></thead> 
+<thead><tr>
+    <th>ID</th><th>RegNo</th><th>Subject</th><th>Type</th>
+    <th>Total Marks</th><th>Obtain Marks</th><th>Percentage</th>
+</tr></thead> 
 <tbody> 
     {% for item in Result_table %}
+
+    {% if item.uniqueid_id == None %}
     <tr>
         <td> {{ forloop.counter }}</td>
-        <td> {{ item.4 }}</td>
-        <td> {{ item.1 }}</td>
-        <td> {{ item.7 }}</td>
-        <td> {{ item.2 }}</td>
-        <td> {{ item.3 }}</td>
+        <td> {{ item.regno_id }}</td>
+        <td> {{ item.subject_id }}</td>
+        <td>Paper</td>
+        <td> {{ item.tmarks }}</td>
+        <td> {{ item.marks }}</td>
+        <td> {{ item.percentage | floatformat }} %</td>
         </td>
     </tr>
+    {% endif %}
+
+    {% if item.uniqueid_id != None %}
+    <tr>
+        <td> {{ forloop.counter }}</td>
+        <td> {{ item.regno_id }}</td>
+        <td> {{ item.subject_id }}</td>
+        <td> {{ item.uniqueid.req }}</td>
+        <td> {{ item.tmarks }}</td>
+        <td> {{ item.marks }}</td>
+        <td> {{ item.percentage | floatformat }} %</td>
+        </td>
+    </tr>
+    {% endif %}    
     {% endfor %}
 </tbody> 
-</table></div>
-
-
-</div> 
+</table></div></div> 
 

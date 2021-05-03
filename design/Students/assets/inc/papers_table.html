@@ -13,19 +13,25 @@
 <thead> 
 <tr>
     <th>ID</th><th>Courses</th>
-    <th>Teachers Name</th><th>Paper Time</th>
+    <th>Teachers Name</th><th>Paper Time</th><th>Time Duration</th>
     <th>View</th></tr></thead> 
 <tbody> 
     
+
     {% for i in get_papers %}
     <tr>
         <td>{{forloop.counter}}</td>
         <td>{{i.subject}}</td>
         <td>{{i.TeacherName}}</td>
+        <td>{{i.PstartTime}}</td>
         <td>{{i.PaperTime}}</td>
         <td><button value="{{i.examid}}" class="exambtn" >View</button></td>
     </tr>
     {% endfor %}
+
+
+
+    
 
 
 </tbody> 

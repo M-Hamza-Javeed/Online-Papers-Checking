@@ -45,7 +45,7 @@ def exams(request):
 def results(request):
     data=Auth(request)
     if data:
-        return render(request,'Teachers/results.html',{"Result_table":Get_Results(),"head":data[1]})
+        return render(request,'Teachers/results.html',{"Result_table":Get_Results(data[1]["email"]),"result":"","head":data[1]})
     else:
         return redirect('/Teachers/Signin/')
 

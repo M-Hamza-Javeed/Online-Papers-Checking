@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.db import connection,transaction
 from Database.views import Student_Signin ,Generate_Forms,get_papers,\
     student_assign_course,RegisterSubject,Student_result_subject,\
-        student_quiz,student_assignments,_process_form
+        student_quiz,student_assignments,_process_form,get_Student_data
 from django.contrib.sessions.models import Session
 from datetime import date
 import json
@@ -147,6 +147,7 @@ def _Session(request):
     request.session['regno']=request.POST['regno']
     request.session['req']='Students'
     request.session['date']=d2
+    request.session['dash_data']= get_Student_data(request.POST['regno'])
     return True
 
 

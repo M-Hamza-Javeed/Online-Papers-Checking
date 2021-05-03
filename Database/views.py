@@ -17,6 +17,7 @@ from django.conf import settings
 import json
 import os
 from nlp.nlp import simalarity
+from django.db.models import Q
 
 
 
@@ -70,6 +71,29 @@ def Student_Signin(request):
             return False
     else:
         return False
+
+import datetime
+def get_Student_data(_regno):
+    exam_data=[];stdpass=[];examid=[]
+    courses=StudentSubject.objects.filter(regno=_regno).values('subject')
+    for i in courses:
+        teacher=TeacherSubject.objects.filter(subject=i['subject']).values('email')[0]
+        exam=Exam.objects.filter(email=teacher['email']).values('pdate','ptime','examid')[0]
+
+
+        if not exam['examid'] in examid:
+            examid.append(exam['examid'])
+            exam_data.append({"date":str(exam['pdate'].year)+","+str(exam['pdate'].month)+","
+        +str(exam['pdate'].day),"time":str(exam['ptime'].hour)+","
+        +str(exam['ptime'].minute)+","+str(exam['ptime'].second)})
+
+    resultsub=ResultStubject.objects.filter(regno=_regno,uniqueid=None).values('percentage')
+    for i in resultsub:
+        if i['percentage'] >= 30:
+            stdpass.append(1)
+    return {"subject":courses.count(),"exam":exam_data,
+    "result":{"pass":len(stdpass),"fail":resultsub.count()-len(stdpass)}}
+
 
 
 def Teacher_Signin(request):
@@ -211,9 +235,22 @@ def merge(res,std):
     return data
 
 
-def Get_Results():
-    res=ResultStudent.objects.values_list();std=Student.objects.values_list()
-    data=merge(res,std);print(data)
+def Get_Results(_email):
+    data=[]
+    exam= Exam.objects.filter(email=_email).values()
+    uniquid=quiz_assignment_id.objects.filter(email=_email).values()
+    
+    for i in exam:
+        res=ResultStubject.objects.filter(Examid=i['examid'])
+        if len(res)>0:
+            data.append(res[0])
+
+    for i in uniquid:
+        res=ResultStubject.objects.filter(uniqueid=i['uniqueid'])
+        print(res)
+        if len(res) >0:
+            data.append(res[0])
+
     return data
 
 
@@ -389,6 +426,7 @@ def _get_question(id):
 def ISForm_Submitted(_examid,req,_regno):
     if req == "papers":
         exam=get_examid(_examid)
+        print(exam)
         _ExamStudentAnswer = ExamStudentAnswer.objects.filter(Examid=exam['examid'],regno=_regno).count()
         _ExamStudentMcqs =ExamStudentMcqs.objects.filter(Examid=exam['examid'],regno=_regno).count()
         _ExamScanPaper =ExamScanPaper.objects.filter(examid=exam['examid'],regno=_regno).count()
@@ -516,7 +554,10 @@ def get_exam(_email,_subject,_name):
     for i in  Exam.objects.filter(email=_email).order_by('-examid').values():
         examid =ExamQuestions.objects.filter(examid=i['examid'],subject=_subject).values()
         if len(examid) > 0:
-            return {"examid":i['examid'],"PaperTime":i['time_duration'],"subject":_subject,"TeacherName":_name}    
+            return {"examid":i['examid'],
+            "PstartTime":str(i['pdate'].year)+","+str(i['pdate'].month)+","+str(i['pdate'].day)+" time "+
+            str(i['ptime'].hour)+","+str(i['ptime'].minute)+","+str(i['ptime'].second),
+            "PaperTime":i['time_duration'],"subject":_subject,"TeacherName":_name}    
 
 
 def get_papers(_regno):
@@ -673,6 +714,9 @@ def ResultStubject_create(_id,_req,_regno,_course,_obtain_marks,_total_marks):
         _percentage=(_obtain_marks/_total_marks)*100
         ResultStubject(regno=_regno,subject=_course,Examid=None,uniqueid=_id,
         marks=_obtain_marks,tmarks=_total_marks,percentage=_percentage).save()
+
+def _get_ResultStubject():
+    return ResultStubject.objects.all()
 
 
 
