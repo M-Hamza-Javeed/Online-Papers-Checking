@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect
 from django.http import HttpResponse
 from django.db import connection,transaction
 from Database.views import Teacher_Signin,Get_Courses,create_mcqs,Get_Students,\
-    create_subjective,create_exam,Dashboard,get_AssignCourses,get_Exams,Get_Results
+    create_subjective,create_exam,Dashboard,get_AssignCourses,get_Exams,Get_Results,_get_result_subject_Teacher
 from django.contrib.sessions.models import Session
 import json
 from datetime import date
@@ -27,7 +27,7 @@ def Auth(request):
 def dashboard(request):
     data=Auth(request)
     if data:
-        return render(request,'Teachers/dashboard.html',{"Data":Dashboard(),"head":data[1]})
+        return render(request,'Teachers/dashboard.html',{"Data":Dashboard(),"head":data[1],"LoadData":_get_result_subject_Teacher(data[1]['email'])})
     else:
         return redirect('/Teachers/Signin/')
 

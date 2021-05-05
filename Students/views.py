@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.db import connection,transaction
 from Database.views import Student_Signin ,Generate_Forms,get_papers,\
     student_assign_course,RegisterSubject,Student_result_subject,\
-        student_quiz,student_assignments,_process_form,get_Student_data
+        student_quiz,student_assignments,_process_form,get_Student_data,_get_result_subject_Student
 from django.contrib.sessions.models import Session
 from datetime import date
 import json
@@ -28,7 +28,7 @@ def dashboard(request):
     data=Auth(request)
     if data:
         print(request.session['regno'])
-        return render(request,'Students/dashboard.html',{"head":data[1]})
+        return render(request,'Students/dashboard.html',{"head":data[1],"LoadData":_get_result_subject_Student(data[1]["regno"])})
     else:
         return redirect('/Students/Signin/')
 

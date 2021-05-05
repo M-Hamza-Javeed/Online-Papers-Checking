@@ -11,16 +11,27 @@
 <div>
 </div>
 <table class="dash-table"> 
-<thead><tr><th>ID</th><th>Name</th><th>RegNo</th><th>Date</th><th>GPA</th><th>GPA</th></tr></thead> 
+<thead><tr><th>ID</th><th>Name</th>
+    <th>RegNo</th><th>Type</th><th>Date</th>
+    <th>Marks</th><th>Total Marks</th><th>Percentage</th></tr></thead> 
 <tbody> 
     {% for item in Result_table %}
     <tr>
         <td> {{ forloop.counter }}</td>
-        <td> {{ item.4 }}</td>
-        <td> {{ item.1 }}</td>
-        <td> {{ item.7 }}</td>
-        <td> {{ item.2 }}</td>
-        <td> {{ item.3 }}</td>
+        <td> {{ item.regno.name }}</td>
+        <td> {{ item.regno.regno }}</td>
+
+        {% if item.uniqueid == None  %}
+        <td>paper</td><td>{{item.Examid.pdate}}</td>     
+        {% endif %}
+
+        {% if item.Examid == None  %}
+        <td>{{item.uniqueid.req}}</td><td>{{item.uniqueid.pdate}}</td>
+        {% endif %}
+
+        <td> {{ item.marks }}</td>
+        <td> {{ item.tmarks }}</td>
+        <td> {{ item.percentage }}%</td>
         </td>
     </tr>
     {% endfor %}

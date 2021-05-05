@@ -42,27 +42,37 @@ function open(open_node, close_node) {
 
 
 function load_charts() {
+    let _data = JSON.parse(document.getElementById('dataJson').textContent);
+    _labels=[];_marks=[];_papers=[];resultdata=[];var dataitem;
+    totalstudent=[]
 
     var bar = document.getElementById('bar').getContext('2d');
     var pie = document.getElementById('pie').getContext('2d');
 
-    var chart = new Chart(bar, {
+        _data['data'].forEach(item => {
+            _labels.push(item['regno_id']);
+            _marks.push(item['marks']);
+        });
+
+    console.log(_marks,_labels)
+
+    new Chart(bar, {
         type: 'bar',
-        data: {
-            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-            datasets: [{
-                label: 'Student Resuls', backgroundColor: '#ff6347',
-                data: [5, 10, 5, 2, 20, 30, 45]
-            }]
-        }
+        data: {        
+            labels: _labels,
+            datasets: [{label :["Exam Result"],backgroundColor:'#ff6347',data:_marks}]},
+        options:{scales:{ yAxes:[{ticks:{beginAtZero:true}}]}}
     });
 
 
-    var myChart = new Chart(pie, {
+    new Chart(pie, {
         type: 'doughnut',
         data: {
             labels: ["Pass", "Fail"],
-            datasets: [{ data: [60, 40], backgroundColor: ['#ff6347', '#422232'], borderAlign: "center" }]
+            datasets: [
+                { data: [ _data['pass'],  _data['fail'] ],
+
+            backgroundColor: ['#ff6347', '#422232'], borderAlign: "center" }]
         }
     });
 

@@ -5,7 +5,8 @@ from Database.views import Dashboard,Get_Results,get_AssignCourses,Get_Courses,A
     Teacher_Signup,Get_Teachers,Delete_Teachers,Update_Teachers,Students_Signup,\
         Get_Students,Delete_Student,Update_Student,Assign_courses,\
             Delete_Assign_Course,Delete_Courses,get_Exams,\
-                get_student_courses,Assign_course_student,get_teacher_subject,Delete_Student_Courses,Ocr_Mode
+                get_student_courses,Assign_course_student,get_teacher_subject,\
+                Delete_Student_Courses,Ocr_Mode,_get_result_subject_Admin,Get_Results_Admin
 from Database.forms import Assign_Course,_StudentSubject
 from django.contrib.sessions.models import Session
 
@@ -29,7 +30,7 @@ def Auth(request):
 def dashboard(request):
     data=Auth(request)
     if data:
-        return render(request,'Admin/dashboard.html',{"data":Dashboard(),"head":data[1]})
+        return render(request,'Admin/dashboard.html',{"data":Dashboard(),"LoadData":_get_result_subject_Admin(),"head":data[1]})
     else:
         return redirect('/')
 
@@ -69,7 +70,7 @@ def AddStudentCourses(request):
 def results(request):
     data=Auth(request)
     if data:
-        return render(request,'Admin/results.html',{'Result_table':Get_Results(),"head":data[1]})
+        return render(request,'Admin/results.html',{'Result_table':Get_Results_Admin(),"head":data[1]})
     else:
         return redirect('/')
 

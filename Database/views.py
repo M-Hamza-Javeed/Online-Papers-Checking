@@ -20,6 +20,33 @@ from nlp.nlp import simalarity
 from django.db.models import Q
 
 
+def _get_result_subject_Admin():
+    _ResultStubject=ResultStubject.objects.filter(percentage__gte=50)
+    _TResultStubject=ResultStubject.objects.filter(uniqueid_id=None)
+    data= [i for i in _TResultStubject.values()]
+
+    return json.dumps({"data":data,"pass":_ResultStubject.count(),
+    "fail":_TResultStubject.count()-_ResultStubject.count()})
+
+
+def _get_result_subject_Student(_regno):
+    _ResultStubject=ResultStubject.objects.filter(percentage__gte=50,regno=_regno)
+    _TResultStubject=ResultStubject.objects.filter(uniqueid_id=None,regno=_regno)
+    data= [i for i in _TResultStubject.values()]
+
+    return json.dumps({"data":data,"pass":_ResultStubject.count(),
+    "fail":_TResultStubject.count()-_ResultStubject.count()})
+
+
+def _get_result_subject_Teacher(_email):
+    teasub=TeacherSubject.objects.filter(email=_email)
+    _ResultStubject=ResultStubject.objects.filter(percentage__gte=50)
+    _TResultStubject=ResultStubject.objects.filter(uniqueid_id=None)
+    data= [i for i in _TResultStubject.values()]
+
+    return json.dumps({"data":data,"pass":_ResultStubject.count(),
+    "fail":_TResultStubject.count()-_ResultStubject.count()})
+
 
 
 def validations(request):
@@ -254,6 +281,12 @@ def Get_Results(_email):
     return data
 
 
+def Get_Results_Admin():
+    data=ResultStubject.objects.all()
+    return data
+
+
+
 ''' Data -> [[1, 'FA17-BCS-005', 4, 3, 'Hamza', 'FA17-BCS-005', 'admin',
 datetime.date(2021, 1, 12)], [2, 'FA17-BCS-006', 4, 4, 'Hamza', 'FA17-BCS-006', 
 'admin', datetime.date(2021, 1, 12)]]'''
@@ -265,8 +298,10 @@ def Read_Setting():
 
 
 def Dashboard():
-    res=(ResultStudent.objects.values_list('regno').distinct().count())
-    Data=[Student.objects.all().count(),Teacher.objects.all().count(),Courses.objects.all().count(),res,Read_Setting()];
+    Data=[Student.objects.all().count(),Teacher.objects.all().count(),
+    Courses.objects.all().count(),ResultStubject.objects.filter(uniqueid=None,percentage__gte=50).count(),
+    Read_Setting()];
+
     print(Data)
     return Data
 
