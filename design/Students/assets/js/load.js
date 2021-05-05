@@ -1,23 +1,10 @@
 window.onload=function(){
 
 
-    let card_item=document.getElementsByClassName("sidebar-btn");
-    for(var i=0;i<card_item.length-1;i++){
-    if(card_item[i].nextElementSibling!=null){
-    card_item[i].nextElementSibling.style.display='none';
-    card_item[i].addEventListener("click",(event)=>{
-    var dis=event.target.parentElement.nextElementSibling;
-    if(dis.style.display=="none"){dis.style.display="block";}else{dis.style.display="none";}
-    });}}
+    var bar = document.getElementById('bar');
+    var pie = document.getElementById('pie');
 
-   var path=document.URL.split('/');
-   var page=path[path.length-2].split('.')[0];
-   var pages=["Exams","Add_Coruses","Courses","Results","Students","Teachers"];
-   var present=false;
-    
-   for (var i=0;i<6;i++){if(page==pages[i]){present=true;}}
-        load_charts();
-}
+    if (bar && pie){load_charts(bar.getContext('2d'),pie.getContext('2d'));}
 
 
 
@@ -58,3 +45,4 @@ function load_charts() {
 
 }
 
+}

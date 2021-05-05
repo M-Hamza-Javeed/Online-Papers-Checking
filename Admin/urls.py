@@ -15,7 +15,6 @@ Including another URLconf
 """
 from django.urls import path,re_path
 from . import views
-
 urlpatterns = [
     path('',views.dashboard ,name="Admin_dashboard"),
     path('Exam/' ,views.exams ,name="Admin_exams"),
@@ -26,5 +25,5 @@ urlpatterns = [
     path('Student/',views.students ,name="Admin_students"),
     path('Teacher/',views.teachers ,name="Admin_teachers"),
     path('api/',views.api ,name="api"),
-    re_path(r'.+',views.dashboard)   
+    re_path(r'$',views.dashboard)
 ]

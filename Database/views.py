@@ -611,7 +611,7 @@ def get_quiz_assignment(_email,_subject,_name,req):
     for i in  quiz_assignment_id.objects.filter(email=_email).order_by('-uniqueid').values():
         if req == i['req']:
             examid =Questions.objects.filter(uniqueid=i['uniqueid'],subject=_subject).values()
-            print(req)
+            print(examid,i['uniqueid'],_subject)
             if len(examid) > 0:
                 return {"examid":i['uniqueid'],"subject":_subject,"Pdate":i["pdate"],"TeacherName":_name}
         if req=='mcqs':
@@ -650,7 +650,9 @@ def student_assignments(_regno):
     for course in _course:
         _Teachers=TeacherSubject.objects.filter(subject=course.subject.subject).values('email','name')
         for i in  _Teachers:
+            print(course.subject.subject)
             assignment_id=(get_quiz_assignment(i['email'],course.subject.subject,i['name'],"assignment"))
+            print(assignment_id)
             if assignment_id != None: 
                 _assignment.append(assignment_id)
                 

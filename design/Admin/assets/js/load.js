@@ -1,31 +1,28 @@
-window.onload = function () {
+document.addEventListener('DOMContentLoaded', (event) => {
 
     let card_item = document.getElementsByClassName("sidebar-btn");
-    for (var i = 0; i < card_item.length - 1; i++) {
+    for (var i = 0; i < 2; i++) {
         if (card_item[i].nextElementSibling != null) {
             card_item[i].nextElementSibling.style.display = 'none';
             card_item[i].addEventListener("click", (event) => {
                 var dis = event.target.parentElement.nextElementSibling;
-                if (dis.style.display == "none") { dis.style.display = "block"; } else { dis.style.display = "none"; }
+                if (dis.style.display == "none") { 
+                dis.style.display = "block"; } 
+                else { dis.style.display = "none"; }
             });
         }
     }
 
-    var path =new URL(document.URL).pathname
-    var pages=path.split('/')
-    var page=pages[pages.length-2]
+    var bar = document.getElementById('bar');
+    var pie = document.getElementById('pie');
 
-
-    if (page=="Admin") {
-        load_charts();
-    }
-    else {
-        var close_node = document.getElementsByClassName("close")[0];
-        var open_node = document.getElementsByClassName("open")[0];
-        close(close_node);
-        open(open_node, close_node);
-    }
-}
+    if (bar && pie){load_charts(bar.getContext('2d'),pie.getContext('2d'));}
+    var close_node = document.getElementsByClassName("close")[0];
+    var open_node = document.getElementsByClassName("open")[0];
+    
+    if (close_node){close(close_node);}
+    if (close_node && open_node){open(open_node,close_node);}
+    
 
 function close(close_node) {
     close_node.addEventListener("click", (event) => {
@@ -41,20 +38,18 @@ function open(open_node, close_node) {
 
 
 
-function load_charts() {
+function load_charts(bar ,pie) {
     let _data = JSON.parse(document.getElementById('dataJson').textContent);
     _labels=[];_marks=[];_papers=[];resultdata=[];var dataitem;
     totalstudent=[]
 
-    var bar = document.getElementById('bar').getContext('2d');
-    var pie = document.getElementById('pie').getContext('2d');
+    
 
         _data['data'].forEach(item => {
             _labels.push(item['regno_id']);
             _marks.push(item['marks']);
         });
 
-    console.log(_marks,_labels)
 
     new Chart(bar, {
         type: 'bar',
@@ -77,3 +72,5 @@ function load_charts() {
     });
 
 }
+
+});
