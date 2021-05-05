@@ -99,27 +99,30 @@ def Student_Signin(request):
     else:
         return False
 
-import datetime
 def get_Student_data(_regno):
     exam_data=[];stdpass=[];examid=[]
     courses=StudentSubject.objects.filter(regno=_regno).values('subject')
     for i in courses:
-        teacher=TeacherSubject.objects.filter(subject=i['subject']).values('email')[0]
-        exam=Exam.objects.filter(email=teacher['email']).values('pdate','ptime','examid')[0]
+        teachers=TeacherSubject.objects.filter(subject=i['subject']).values('email')
+        if teachers.count()>0: 
+            teacher=teachers[0]
+            exams=Exam.objects.filter(email=teacher['email']).values('pdate','ptime','examid')
+            if exams.count()>0:
+                exam=exams[0]
 
+                if not exam['examid'] in examid:
+                    examid.append(exam['examid'])
+                    exam_data.append({"date":str(exam['pdate'].year)+","+str(exam['pdate'].month)+","
+                +str(exam['pdate'].day),"time":str(exam['ptime'].hour)+","
+                +str(exam['ptime'].minute)+","+str(exam['ptime'].second)})
 
-        if not exam['examid'] in examid:
-            examid.append(exam['examid'])
-            exam_data.append({"date":str(exam['pdate'].year)+","+str(exam['pdate'].month)+","
-        +str(exam['pdate'].day),"time":str(exam['ptime'].hour)+","
-        +str(exam['ptime'].minute)+","+str(exam['ptime'].second)})
+            resultsub=ResultStubject.objects.filter(regno=_regno,uniqueid=None).values('percentage')
+            for i in resultsub:
+                if i['percentage'] >= 50: stdpass.append(1)
 
-    resultsub=ResultStubject.objects.filter(regno=_regno,uniqueid=None).values('percentage')
-    for i in resultsub:
-        if i['percentage'] >= 30:
-            stdpass.append(1)
-    return {"subject":courses.count(),"exam":exam_data,
-    "result":{"pass":len(stdpass),"fail":resultsub.count()-len(stdpass)}}
+            return {"subject":courses.count(),"exam":exam_data,
+            "result":{"pass":len(stdpass),"fail":resultsub.count()-len(stdpass)}}
+    return False
 
 
 
