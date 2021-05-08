@@ -1,9 +1,8 @@
-document.getElementsByClassName('card-search')[0].querySelector('input').addEventListener('click',(items)=>{
-var SwapingNode=document.querySelectorAll('.table-body tr')[0]
-document.querySelectorAll('.table-body td').forEach((item)=>{ 
-if (item.innerText == items.target.value.toString() ){ console.log(items.target);
-item.parentElement.before(SwapingNode);}
+document.getElementsByClassName('card-search')[0].querySelector('input').addEventListener('input',(items)=>{
+var SwapingNode=document.querySelectorAll('tbody tr')[0];var Node=false;
+document.querySelectorAll('tbody td').forEach((item)=>{ 
+if (item.innerText == items.target.value.toString() ){Node=item.parentElement;}
 });
+if (Node != false){SwapingNode.before(Node);}
 });
-  
-                                
+                                                             

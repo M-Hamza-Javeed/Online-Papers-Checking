@@ -13,6 +13,18 @@ document.addEventListener('DOMContentLoaded', (event) => {
         }
     }
 
+    let cardsearch=document.getElementsByClassName('card-search')[0];
+    var SwapingNode=document.querySelectorAll('tbody tr')[0];
+    if (cardsearch){
+    cardsearch.querySelector('input').addEventListener('input',(items)=>{
+    var Node=false;
+    document.querySelectorAll('tbody td').forEach((item)=>{ 
+    if (item.innerText == items.target.value.toString() ){Node=item.parentElement;}});
+    if (Node != false){SwapingNode.after(Node);}
+    });
+    }
+
+
     var bar = document.getElementById('bar');
     var pie = document.getElementById('pie');
 
