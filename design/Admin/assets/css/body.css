@@ -4,7 +4,9 @@
 .dash-col{background-color:#f5f6f7eb;width:250px;height:165px;box-shadow: 1px 1px 5px #c5c5c5;}
 .col-heading{width: 100%;height: 25%;background-color: #367f9b;display:flex;justify-content:center;flex-direction:column;}
 .col-heading p,h{margin-left:20px;color:#fff;font-size:20px;display:flex;justify-content:space-between;}
-.col-heading i{margin-right:10px;font-size:23px;color: #fff;}
+.dash-col  .col-heading i{margin-right:10px;font-size:23px;color: rgb(255, 255, 255);}
+.card-search i{color: rgb(0, 0, 0)!important}
+
 .col-heading .icon:hover{cursor: pointer;color:#eaeaea;}
 .col-fotter{height: 25px;display:flex;justify-content:center;flex-direction:column;}
 .col-fotter p{margin-left:20px;font-size:13px;color:#fff}
