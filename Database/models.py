@@ -170,15 +170,6 @@ class ResultStubject(models.Model):
 
 
 
-class ResultStudent(models.Model):
-    regno = models.ForeignKey('Student', models.DO_NOTHING, db_column='RegNo')  
-    cgpa = models.FloatField(db_column='CGPA')  
-    gpa = models.FloatField(db_column='GPA')  
-
-    class Meta:
-        db_table = 'result_student'
-
-
 class Student(models.Model):
     name = models.CharField(db_column='Name', max_length=60)  
     regno = models.CharField(db_column='RegNo', primary_key=True, max_length=50)  

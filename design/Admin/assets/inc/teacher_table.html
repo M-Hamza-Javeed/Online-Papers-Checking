@@ -62,11 +62,11 @@
             <tbody class="table-body">
                 {% for item in Teachers_table %}
                 <tr>
-                    <td> {{ forloop.counter }}</td>
-                    <td> {{ item.name }}</td>
-                    <td> {{ item.email }}</td>
-                    <td> {{ item.phonenumber }}</td>
-                    <td> {{ item.password }}</td>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.email }}</td>
+                    <td>{{ item.phonenumber }}</td>
+                    <td>{{ item.password }}</td>
                     <td><button onclick="deletes(this)" value={{ item.email }}>Delete</button></td>
                     <td><button onclick="Updates(this)" value={{ item.email }}>Update</button>
                         <button style="display:none;" onclick="Submit(this)" value={{ item.email }}>Submit</button></td>

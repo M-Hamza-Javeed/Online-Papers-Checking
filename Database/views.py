@@ -3,10 +3,9 @@ from django.db import connection,transaction
 from Database.forms import Assign_Course,Admin_Auth,Student_Auth,_ContactUs,\
     Teacher_Auth,Add_Course,Exams,_Mcqs,_StudentSubject
 from Database.models import Admin,Student,Teacher,Courses,TeacherSubject,\
-    Exam,ResultStudent,Mcqs,McqsChoice,Questions,ExamMcqs,\
-        ExamMcqsChoice,ExamQuestions,StudentSubject,ResultStubject,\
-            quiz_assignment_id,ExamStudentMcqs,ExamStudentAnswer,\
-                ExamScanPaper,StudentAnswer,StudentMcqs
+    Exam,Mcqs,McqsChoice,Questions,ExamMcqs,ExamMcqsChoice,ExamQuestions,\
+    StudentSubject,ResultStubject,quiz_assignment_id,ExamStudentMcqs,\
+        ExamStudentAnswer,ExamScanPaper,StudentAnswer,StudentMcqs
 import re
 from django.contrib import auth
 from datetime import date
