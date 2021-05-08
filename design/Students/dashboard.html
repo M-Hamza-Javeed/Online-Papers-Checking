@@ -9,8 +9,8 @@
 <p>
 Paper times
 {% for i in head.dash_data.exam %}
-<span style="margin:10px;"> {{i.date}} </span>
-<span style="margin:10px;"> {{i.time}} </span>
+<span style="margin:10px;">Date: {{i.date}} </span>
+<span style="margin:10px;">Time: {{i.time}} </span>
 {% endfor %}
 </p>
 </div>
@@ -20,7 +20,7 @@ Paper times
 
 <div class="dash-col col" style="width:30%;">
 <div class="col-heading purple-color"><p>Subjects<i class="icon ion-android-download"></i></p></div>
-<div class="col-body"><p>{{head.courses.subject}}<span> Subjects</span></p></div>
+<div class="col-body"><p>{{head.dash_data.subject}}<span> Subjects</span></p></div>
 <div class="col-fotter purple-color"><p>View Details</p></div>
 </div>
 
@@ -39,7 +39,7 @@ Paper times
 <div class="col" style="min-width:57%;">
 <canvas id="bar"></canvas></div>
 <div class="col pie-chart" style="min-width:40%;">
-<canvas id="pie"></canvas><p class="pie-text">Result</p></div>
+<canvas id="pie"></canvas><p style="font-size:small" class="pie-text">Result:  quiz/assignment/papers</p></div>
 </div>
 
 

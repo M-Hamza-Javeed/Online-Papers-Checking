@@ -116,6 +116,7 @@ def get_Student_data(_regno):
                 +str(exam['ptime'].minute)+","+str(exam['ptime'].second)})
 
             resultsub=ResultStubject.objects.filter(regno=_regno,uniqueid=None).values('percentage')
+            print(resultsub)
             for i in resultsub:
                 if i['percentage'] >= 50: stdpass.append(1)
 
