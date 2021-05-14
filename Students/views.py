@@ -9,19 +9,37 @@ from datetime import date
 import json
 
 def Auth(request):
-    session_key=request.session._session_key
-    if session_key is not None:
-        print("_________________________________________________________")
-        session = Session.objects.get(session_key=session_key)
-        session_data = session.get_decoded()
-        if session_data['req']=='Students':
-            print("\n Session Key   -> ", session_key)
-            print("\n Session Data  -> ", session_data,"\n")
-            return True,session_data
+    try:
+        session_key=request.session._session_key
+        if session_key is not None:
+            print("_________________________________________________________")
+            session = Session.objects.get(session_key=session_key)
+            session_data = session.get_decoded()
+            if session_data['req']=='Students':
+                print("\n Session Key   -> ", session_key)
+                print("\n Session Data  -> ", session_data,"\n")
+                return True,session_data
+            else:
+                return False
         else:
             return False
-    else:
-        return False
+    except:
+        pass
+
+
+
+def delsession(request):
+    try:
+        session_key=request.session._session_key
+        session = Session.objects.get(session_key=session_key)
+        session_data = session.get_decoded()
+        for i in session_data:
+            del request.session[i]
+    except:
+        print("error")
+        pass
+
+
 
 
 def dashboard(request):
@@ -137,6 +155,9 @@ def api(request):
         elif request.POST['req']=="assignment":
             _process_form(json.loads(request.POST['data']),data[1]['regno'])
 
+    if request.POST['req'] == "signout":
+            delsession(request)
+            print("-> Signout <-")
 
     return render(request,"Students/api.html")
 

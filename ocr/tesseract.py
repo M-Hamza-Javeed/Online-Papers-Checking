@@ -12,12 +12,12 @@ from gensim.models.word2vec import Word2Vec
 
 
 path=settings.BASE_DIR
-tessdata_dir_config = r'--tessdata-dir "C:\Program Files\Tesseract-OCR\tessdata"'
+ocrpath=path+"\\tessdata"
+tessdata_dir_config = r'--tessdata-dir '+ocrpath
 configuration = cloudmersive_ocr_api_client.Configuration()
 configuration.api_key['Apikey'] = 'a4fb3f40-6ad8-4eb9-8101-9e63b7885c8a'
 api_instance = cloudmersive_ocr_api_client.ImageOcrApi(cloudmersive_ocr_api_client.ApiClient(configuration))
 recognition_mode = 'Normal';language = 'ENG' ;preprocessing = 'None' 
-
 
 
 def Read_Setting():
@@ -42,7 +42,7 @@ def ExtractText(_img):
 
 
 def text(data):
-    text= re.sub("[^a-zA-z]"," ",str(data))
+    text= re.sub("[^a-zA-z]"," ",str(data));print(text,path)
     return (text)
     
 

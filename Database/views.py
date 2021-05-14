@@ -904,13 +904,13 @@ def Calculate_Papers_Process(data,req):
                 if keyword != "":
                     if keyword in Answer_Keywords:
                         keyword_marks=keyword_marks+data['Per_keyword_Mark']
-            jaccard_sim_marks=(jaccard_sim_marks*int(data['point'])-((data['sim']['sen2']['error']*data['Per_keyword_Mark'])*0.5))
+            keyword_marks=(int(data['point'])-((data['sim']['sen2']['error']*data['Per_keyword_Mark'])*0.5))
         else:
-            jaccard_sim_marks=(jaccard_sim_marks*int(data['point'])-(data['sim']['sen2']['error']*0.5))
+            keyword_marks=(int(data['point'])-(data['sim']['sen2']['error']*0.5))
         
         _ner=_NER(data['sim']['lingustic_features_sent1'],data['sim']['lingustic_features_sent2'])
 
-        print("keyword_marks     -> "   ,   keyword_marks ," Empty-space will not be consider ")
+        print("keyword_marks     -> "   ,   keyword_marks , " Empty-space will not be consider ")
         print("Answer_Keywords   -> "   ,   Answer_Keywords)
         print("Question_keywords -> "   ,   keywords)
         print("Per_keyword_Marks -> "   ,   data['Per_keyword_Mark'])

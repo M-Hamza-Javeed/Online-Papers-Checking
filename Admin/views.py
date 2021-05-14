@@ -13,18 +13,38 @@ from django.contrib.sessions.models import Session
 
 def Auth(request):
     session_key=request.session._session_key
-    if session_key is not None:
-        print("_________________________________________________________")
-        session = Session.objects.get(session_key=session_key)
-        session_data = session.get_decoded()
-        if session_data['req']=='Admin':
-            print("\n Session Key   -> ", session_key)
-            print("\n Session Data  -> ", session_data,"\n")
-            return True,session_data
+    try:
+        if session_key is not None:
+            print("_________________________________________________________")
+            session = Session.objects.get(session_key=session_key)
+            session_data = session.get_decoded()
+            if session_data['req']=='Admin':
+                print("\n Session Key   -> ", session_key)
+                print("\n Session Data  -> ", session_data,"\n")
+                return True,session_data
+            else:
+                return False
         else:
             return False
-    else:
-        return False
+    except:
+        pass
+    return False
+
+
+
+
+def delsession(request):
+    try:
+        session_key=request.session._session_key
+        session = Session.objects.get(session_key=session_key)
+        session_data = session.get_decoded()
+        for i in session_data:
+            del request.session[i]
+    except:
+        print("error")
+        pass
+
+
 
 
 def dashboard(request):
@@ -32,7 +52,7 @@ def dashboard(request):
     if data:
         return render(request,'Admin/dashboard.html',{"data":Dashboard(),"LoadData":_get_result_subject_Admin(),"head":data[1]})
     else:
-        return redirect('/')
+        return redirect('/Login')
 
 
 
@@ -130,6 +150,11 @@ def api(request):
                 print(Delete_Student_Courses(request))
             if request.POST['req'] == "ocr_mode":
                 print(Ocr_Mode(request))
+            if request.POST['req'] == "signout":
+                delsession(request)
+                print("-> Signout <-")
+
+
 
 
         return render(request,'Admin/API.html')

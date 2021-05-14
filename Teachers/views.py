@@ -9,19 +9,38 @@ from datetime import date
 
 
 def Auth(request):
-    session_key=request.session._session_key
-    if session_key is not None:
-        print("_________________________________________________________")
-        session = Session.objects.get(session_key=session_key)
-        session_data = session.get_decoded()
-        if session_data['req']=='Teachers':
-            print("\n Session Key   -> ", session_key)
-            print("\n Session Data  -> ", session_data,"\n")
-            return True,session_data
+    try:
+        session_key=request.session._session_key
+        if session_key is not None:
+            print("_________________________________________________________")
+            session = Session.objects.get(session_key=session_key)
+            session_data = session.get_decoded()
+            if session_data['req']=='Teachers':
+                print("\n Session Key   -> ", session_key)
+                print("\n Session Data  -> ", session_data,"\n")
+                return True,session_data
+            else:
+                return False
         else:
             return False
-    else:
-        return False
+    except:
+        pass
+    return False
+
+
+def delsession(request):
+    try:
+        session_key=request.session._session_key
+        session = Session.objects.get(session_key=session_key)
+        session_data = session.get_decoded()
+        for i in session_data:
+            del request.session[i]
+    except:
+        print("error")
+        pass
+
+
+
 
 
 def dashboard(request):
@@ -110,6 +129,10 @@ def api(request):
                 print(request.POST['req'])
                 print(request.POST)
                 create_exam(json.loads(request.POST['data']),data[1]["email"])
+            if request.POST['req'] == "signout":
+                delsession(request)
+                print("-> Signout <-")
+
     except:
         pass
 

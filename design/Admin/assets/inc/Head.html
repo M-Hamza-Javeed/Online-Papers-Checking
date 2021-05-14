@@ -87,24 +87,3 @@
 </nav>
 
 <div class="page-content-wrapper" style="width:100%;">
-
-<script>
-        
-        function _request(node){
-            var req=node.name;
-            var csrftoken="{{ csrf_token }}";
-            var xhr = new XMLHttpRequest();
-            var data = "csrfmiddlewaretoken=" + csrftoken + "&req="+"ocr_mode"+"&data=" + req
-            xhr.open("POST", "http://127.0.0.1:8000/Admin/api/");
-            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            xhr.addEventListener("readystatechange", function () {
-            if (this.readyState === 4){  
-                document.querySelectorAll('.ocrmode').forEach((item)=> { item.style.backgroundColor='#422232'; });
-                node.style.backgroundColor='#4682b4'; 
-            }
-            });
-            xhr.send(data);
-        }
-        
-</script>
-        

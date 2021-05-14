@@ -25,8 +25,7 @@ class OCR(APIView):
                     print(request.POST)
                     return Response(file_serializer.data, status=status.HTTP_201_CREATED)
             else:
-                ExtractText(file_serializer.data['file'])
-                return Response(file_serializer.data, status=status.HTTP_201_CREATED)
+                return Response({"File":file_serializer.data,"Result":ExtractText(file_serializer.data['file'])}, status=status.HTTP_201_CREATED)
         else:
             return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
