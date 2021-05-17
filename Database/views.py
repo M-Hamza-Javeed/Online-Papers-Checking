@@ -777,7 +777,7 @@ def Calculate_Papers(_examid,req,_regno,_course):
             subjective["Student_Answer"]=i['answer'];
             Per_keyword_Mark=[ i for i in question['keywords'].split(',') if i != ""]
             subjective["Per_keyword_Mark"]=question['point']/len(Per_keyword_Mark)
-            subjective["sim"]=simalarity(subjective['answer'],subjective["Student_Answer"])
+            subjective["sim"]=simalarity(subjective['answer'],subjective["Student_Answer"],_course)
             Papers_Total_Marks=Papers_Total_Marks+int(question['point'])
             StdAns_Marks = StdAns_Marks+Calculate_Papers_Process(subjective,"subj")
         print("Exam Marks ->",StdAns_Marks)
@@ -789,7 +789,7 @@ def Calculate_Papers(_examid,req,_regno,_course):
             subjective["Student_Answer"]=i['answer']
             Per_keyword_Mark=[ i for i in question['keywords'].split(',') if i != ""]
             subjective["Per_keyword_Mark"]=question['point']/len(Per_keyword_Mark)
-            subjective["sim"]=simalarity(subjective['answer'],subjective["Student_Answer"])
+            subjective["sim"]=simalarity(subjective['answer'],subjective["Student_Answer"],_course)
             Papers_Total_Marks=Papers_Total_Marks+int(question['point'])
             ScanAnswers_MarK = ScanAnswers_MarK+Calculate_Papers_Process(subjective,"subj")
         print("Exam Handwritten -> ",ScanAnswers_MarK)

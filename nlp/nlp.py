@@ -14,13 +14,14 @@ from gensim.models.word2vec import Word2Vec
 from string import punctuation
 import language_check
 import spacy
+from .models import WModels
 
 
+model=None
 
-nlp = spacy.load("en_core_web_sm")
+nlp = spacy.load("en_core_web_lg")
 tool = language_check.LanguageTool('en-US')
-model = gensim.models.Word2Vec.load(settings.BASE_DIR+'\models\model.w2v')
-
+print("en_core_web_sm is Loaded")
 
 
 
@@ -84,8 +85,30 @@ def remove_noise(tweet_tokens,stop_words):
     return cleaned_tokens
 
 
+def getallmodels(_subj):
+    for i in WModels.objects.all().values():
+        print(i)
+        if i['subj_id'] == _subj:
+            return({"subj":i['subj_id'],"file":i['file']})
+    return False
 
-def simalarity(sent1,sent2):
+
+def loadModel(subj):
+    if len(subj)>0:
+        print(subj[0].subject)
+        name=getallmodels(subj[0].subject)
+        if name:
+            model = gensim.models.Word2Vec.load(settings.MEDIA_ROOT+'\\'+name['file'])
+            print("Model Load "+settings.MEDIA_ROOT+'\\'+name['file'])
+        else:
+            print("No Model Founded so default spacy model is loaded ")
+            return False
+    else:
+        print("No Model Founded so default spacy model is loaded ")
+        return False
+
+
+def simalarity(sent1,sent2,*subj):
     Word2Vec=0;jaccard=0;WordMover=0;doc_sim=0;_stopwords=False;
 
     sent1_token=sent_tokenize(sent1)
@@ -106,9 +129,14 @@ def simalarity(sent1,sent2):
         pass
 
     try:
-        w2v_sent1 = preproc_data(sen1,model)
-        w2v_sent2 = preproc_data(sen2,model)  
-        Word2Vec=cosine_similarity(w2v_sent1,w2v_sent2)[0][0]
+        if loadModel(subj):
+            w2v_sent1 = preproc_data(sen1,model)
+            w2v_sent2 = preproc_data(sen2,model)
+            Word2Vec=cosine_similarity(w2v_sent1,w2v_sent2)[0][0]
+        else:
+            w2v_sent1 = nlp(" ".join(sen1))
+            w2v_sent2 = nlp(" ".join(sen2))
+            Word2Vec=w2v_sent1.similarity(w2v_sent2)
     except:
         pass    
 
@@ -129,9 +157,6 @@ def simalarity(sent1,sent2):
     "stopwords":_stopwords })
 
     return data
-
-
-
 
 
 
