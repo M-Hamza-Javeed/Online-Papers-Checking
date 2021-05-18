@@ -21,7 +21,7 @@ class Courses(models.Model):
 
 class Teacher(models.Model):
     name = models.CharField(db_column='Name', max_length=60)  
-    email = models.EmailField(db_column='Email', primary_key=True, max_length=50)  
+    email = models.EmailField(db_column='Email',unique=True, primary_key=True, max_length=50)  
     phonenumber = models.CharField(db_column='PhoneNumber', unique=True, max_length=15)  
     password = models.CharField(db_column='Password', max_length=50)  
     tdate = models.DateField(db_column='TDate')  
@@ -31,7 +31,7 @@ class Teacher(models.Model):
 
 
 class Exam(models.Model):
-    email = models.ForeignKey(Teacher, models.DO_NOTHING, db_column='Email')     
+    email = models.ForeignKey(Teacher,on_delete=models.CASCADE,db_column='Email')     
     examid = models.IntegerField(db_column='Examid', primary_key=True)  
     pdate = models.DateField(db_column='PDate')  
     ptime = models.TimeField(db_column='PTime')  
@@ -42,7 +42,7 @@ class Exam(models.Model):
 
 
 class ExamMcqsChoice(models.Model):
-    mquestion = models.ForeignKey('ExamMcqs', models.DO_NOTHING, db_column='MQuestion')  
+    mquestion = models.ForeignKey('ExamMcqs',on_delete = models.CASCADE,db_column='MQuestion')  
     choice = models.CharField(db_column='Choice', max_length=300)  
 
     class Meta:
@@ -52,7 +52,7 @@ class ExamMcqsChoice(models.Model):
 class ExamMcqs(models.Model):
     subject = models.CharField(db_column='Subject', max_length=60)  
     mquestion = models.CharField(db_column='MQuestion', primary_key=True, max_length=250)  
-    examid = models.ForeignKey(Exam, models.DO_NOTHING, db_column='Examid')  
+    examid = models.ForeignKey(Exam,on_delete = models.CASCADE,db_column='Examid')  
     manswer = models.TextField(db_column='MAnswer')  
     point = models.IntegerField(db_column='Point')  
 
@@ -65,7 +65,7 @@ class ExamQuestions(models.Model):
     subject = models.CharField(db_column='Subject', max_length=60)  
     question = models.CharField(db_column='Question', primary_key=True, max_length=250)  
     keywords = models.CharField(db_column='keywords', max_length=240)  
-    examid = models.ForeignKey(Exam, models.DO_NOTHING, db_column='Examid')  
+    examid = models.ForeignKey(Exam,on_delete = models.CASCADE,db_column='Examid')  
     answer = models.TextField(db_column='Answer')  
     point = models.IntegerField(db_column='Point')  
     submit = models.BooleanField(db_column='submit',default=True)  
@@ -75,9 +75,9 @@ class ExamQuestions(models.Model):
 
 
 class ExamScanPaper(models.Model):
-    regno = models.ForeignKey('Student', models.DO_NOTHING, db_column='RegNo')  
-    examid = models.ForeignKey(Exam, models.DO_NOTHING, db_column='Examid')  
-    question = models.ForeignKey(ExamQuestions, models.DO_NOTHING, db_column='Question')  
+    regno = models.ForeignKey('Student',on_delete = models.CASCADE,db_column='RegNo')  
+    examid = models.ForeignKey(Exam,on_delete = models.CASCADE, db_column='Examid')  
+    question = models.ForeignKey(ExamQuestions,on_delete = models.CASCADE, db_column='Question')  
     answer = models.TextField(db_column='Answer')  
 
     class Meta:
@@ -86,9 +86,9 @@ class ExamScanPaper(models.Model):
 
 
 class ExamStudentAnswer(models.Model):
-    Examid = models.ForeignKey(Exam, models.DO_NOTHING, db_column='Examid',default='null')  
-    regno = models.ForeignKey('Student', models.DO_NOTHING, db_column='RegNo')  
-    question = models.ForeignKey(ExamQuestions, models.DO_NOTHING, db_column='Question')  
+    Examid = models.ForeignKey(Exam,on_delete = models.CASCADE,db_column='Examid',default='null')  
+    regno = models.ForeignKey('Student',on_delete = models.CASCADE, db_column='RegNo')  
+    question = models.ForeignKey(ExamQuestions,on_delete = models.CASCADE,db_column='Question')  
     answer = models.TextField(db_column='Answer')  
 
     class Meta:
@@ -97,9 +97,9 @@ class ExamStudentAnswer(models.Model):
 
 
 class ExamStudentMcqs(models.Model):
-    Examid = models.ForeignKey(Exam, models.DO_NOTHING, db_column='Examid',default='null')  
-    mquestion = models.ForeignKey(ExamMcqs, models.DO_NOTHING, db_column='MQuestion')  
-    regno = models.ForeignKey('Student', models.DO_NOTHING, db_column='RegNo')  
+    Examid = models.ForeignKey(Exam,on_delete = models.CASCADE, db_column='Examid',default='null')  
+    mquestion = models.ForeignKey(ExamMcqs,on_delete = models.CASCADE, db_column='MQuestion')  
+    regno = models.ForeignKey('Student',on_delete = models.CASCADE, db_column='RegNo')  
     manswer = models.TextField(db_column='MAnswer')  
 
     class Meta:
@@ -108,7 +108,7 @@ class ExamStudentMcqs(models.Model):
 
 
 class quiz_assignment_id(models.Model):
-    email = models.ForeignKey(Teacher, models.DO_NOTHING, db_column='Email')     
+    email = models.ForeignKey(Teacher,on_delete = models.CASCADE, db_column='Email')     
     uniqueid = models.IntegerField(db_column='Uniqueid', primary_key=True)  
     pdate = models.DateField(db_column='PDate')  
     req = models.CharField(db_column='Req',max_length=10)  
@@ -119,7 +119,7 @@ class quiz_assignment_id(models.Model):
 
 
 class Mcqs(models.Model):
-    uniqueid = models.ForeignKey(quiz_assignment_id,models.DO_NOTHING,db_column='Uniqueid')  
+    uniqueid = models.ForeignKey(quiz_assignment_id,on_delete = models.CASCADE,db_column='Uniqueid')  
     subject = models.CharField(db_column='Subject', max_length=60)  
     mquestion = models.CharField(db_column='MQuestion', primary_key=True, max_length=250)  
     manswer = models.CharField(db_column='MAnswer',max_length=240)  
@@ -132,7 +132,7 @@ class Mcqs(models.Model):
 
 
 class McqsChoice(models.Model):
-    mquestion = models.ForeignKey(Mcqs, models.DO_NOTHING, db_column='MQuestion')  
+    mquestion = models.ForeignKey(Mcqs,on_delete = models.CASCADE, db_column='MQuestion')  
     choice = models.CharField(db_column='Choice', max_length=300)  
 
     class Meta:
@@ -141,7 +141,7 @@ class McqsChoice(models.Model):
 
 
 class Questions(models.Model):
-    uniqueid = models.ForeignKey(quiz_assignment_id,models.DO_NOTHING,db_column='Uniqueid')  
+    uniqueid = models.ForeignKey(quiz_assignment_id,on_delete = models.CASCADE,db_column='Uniqueid')  
     subject = models.CharField(db_column='Subject', max_length=60)  
     question = models.CharField(db_column='Question', primary_key=True, max_length=250)  
     keywords = models.CharField(db_column='keywords', max_length=240)  
@@ -153,10 +153,10 @@ class Questions(models.Model):
 
 
 class ResultStubject(models.Model):
-    regno    = models.ForeignKey('Student', models.DO_NOTHING, db_column='RegNo')  
-    subject  = models.ForeignKey('Courses', models.DO_NOTHING, db_column='Subject')  
-    uniqueid = models.ForeignKey(quiz_assignment_id,models.DO_NOTHING,db_column='Uniqueid',blank=True,null=True)  
-    Examid   = models.ForeignKey(Exam, models.DO_NOTHING, db_column='Examid', blank =True,null=True)
+    regno    = models.ForeignKey('Student', on_delete = models.CASCADE, db_column='RegNo')  
+    subject  = models.ForeignKey('Courses', on_delete = models.CASCADE, db_column='Subject')  
+    uniqueid = models.ForeignKey(quiz_assignment_id,on_delete = models.CASCADE,db_column='Uniqueid',blank=True,null=True)  
+    Examid   = models.ForeignKey(Exam,on_delete = models.CASCADE, db_column='Examid', blank =True,null=True)
     marks    = models.FloatField(db_column='Marks')
     tmarks   = models.FloatField(db_column='Total_Marks')  
     percentage = models.FloatField(db_column='Percentage')  
@@ -181,9 +181,9 @@ class Student(models.Model):
 
 
 class StudentAnswer(models.Model):
-    uniqueid = models.ForeignKey(quiz_assignment_id,models.DO_NOTHING,db_column='Uniqueid')  
-    regno = models.ForeignKey(Student, models.DO_NOTHING, db_column='RegNo')  
-    question = models.ForeignKey(Questions, models.DO_NOTHING, db_column='Question')  
+    uniqueid = models.ForeignKey(quiz_assignment_id,on_delete = models.CASCADE,db_column='Uniqueid')  
+    regno = models.ForeignKey(Student,on_delete = models.CASCADE, db_column='RegNo')  
+    question = models.ForeignKey(Questions,on_delete = models.CASCADE, db_column='Question')  
     answer = models.TextField(db_column='Answer')  
 
     class Meta:
@@ -192,9 +192,9 @@ class StudentAnswer(models.Model):
 
 
 class StudentMcqs(models.Model):
-    uniqueid = models.ForeignKey(quiz_assignment_id,models.DO_NOTHING,db_column='Uniqueid')  
-    mquestion = models.ForeignKey(Mcqs, models.DO_NOTHING, db_column='MQuestion')  
-    regno = models.ForeignKey(Student, models.DO_NOTHING, db_column='RegNo')  
+    uniqueid = models.ForeignKey(quiz_assignment_id,on_delete = models.CASCADE,db_column='Uniqueid')  
+    mquestion = models.ForeignKey(Mcqs,on_delete = models.CASCADE, db_column='MQuestion')  
+    regno = models.ForeignKey(Student,on_delete = models.CASCADE, db_column='RegNo')  
     manswer = models.TextField(db_column='MAnswer')  
 
     class Meta:
@@ -203,8 +203,8 @@ class StudentMcqs(models.Model):
 
 
 class StudentSubject(models.Model):
-    regno = models.ForeignKey(Student, models.DO_NOTHING, db_column='RegNo', blank=False, default='')  
-    subject = models.ForeignKey('courses', models.DO_NOTHING, db_column='Subject',blank=False, default='')  
+    regno = models.ForeignKey(Student,on_delete = models.CASCADE, db_column='RegNo', blank=False, default='')  
+    subject = models.ForeignKey('courses',on_delete = models.CASCADE, db_column='Subject',blank=False, default='')  
 
     class Meta:
         db_table = 'student_subject'
@@ -215,8 +215,8 @@ class StudentSubject(models.Model):
 
 class TeacherSubject(models.Model):
     name = models.CharField(db_column='Name', max_length=50)  
-    email = models.ForeignKey(Teacher, models.DO_NOTHING, db_column='Email')  
-    subject = models.ForeignKey(Courses, models.DO_NOTHING, db_column='Subject')  
+    email = models.ForeignKey(Teacher,on_delete = models.CASCADE, db_column='Email')  
+    subject = models.ForeignKey(Courses,on_delete = models.CASCADE, db_column='Subject')  
 
     class Meta:
         db_table = 'teacher_subject'

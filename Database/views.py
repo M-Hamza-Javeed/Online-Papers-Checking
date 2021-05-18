@@ -967,11 +967,3 @@ def Calculate_Papers_Process(data,req):
 
 
 
-
-
-
-
-
-
-
-

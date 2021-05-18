@@ -51,5 +51,3 @@ class Models(APIView):
             return Response(data.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-
-
