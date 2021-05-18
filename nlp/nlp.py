@@ -19,9 +19,13 @@ from .models import WModels
 
 model=None
 
-nlp = spacy.load("en_core_web_lg")
-tool = language_check.LanguageTool('en-US')
-print("en_core_web_sm is Loaded")
+try:
+    nlp = spacy.load("en_core_web_sm")
+    tool = language_check.LanguageTool('en-US')
+    print("en_core_web_sm is Loaded")
+except:
+    print("Not able to en_core_web_sm")
+    pass
 
 
 
@@ -41,9 +45,9 @@ def process_text(data):
         correct.append(line)
 
         for i in list(set(errors)):
-            if i !="Possible Typo" or i != "Capitalization":
+            if not i =="Possible Typo" or i == "Capitalization":
                 total_error=total_error+1
-        print(total_error)
+        print(total_error,list(set(errors)))
 
     return({"correct":correct,"len":len(correct),"error":total_error,"errortypes":list(set(errors))})
 
@@ -86,9 +90,9 @@ def remove_noise(tweet_tokens,stop_words):
 
 
 def getallmodels(_subj):
-    for i in WModels.objects.all().values():
-        print(i)
+    for i in WModels.objects.all().order_by(-id).values():
         if i['subj_id'] == _subj:
+            print({"subj":i['subj_id'],"file":i['file']})
             return({"subj":i['subj_id'],"file":i['file']})
     return False
 
@@ -152,6 +156,7 @@ def simalarity(sent1,sent2,*subj):
 
     data=({"Word2vec_sim":Word2Vec,"jaccard_sim":jaccard,
     "sent1":sent1_correct,"sen2":sent2_correct,
+    "clean_sen1":sen1,"clean_sen2":sen2,
     "lingustic_features_sent1":{"NER":ling1[0]},
     "lingustic_features_sent2":{"NER":ling2[0]},
     "stopwords":_stopwords })

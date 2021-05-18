@@ -17,6 +17,7 @@ import json
 import os
 from nlp.nlp import simalarity
 from django.db.models import Q
+from nltk.corpus import wordnet     
 
 
 def _get_result_subject_Admin():
@@ -819,12 +820,11 @@ def Calculate_Papers(_examid,req,_regno,_course):
             subjective["Student_Answer"]=i['answer']
             Per_keyword_Mark=[ i for i in question['keywords'].split(',') if i != ""]
             subjective["Per_keyword_Mark"]=question['point']/len(Per_keyword_Mark)
-            subjective["sim"]=simalarity(subjective['answer'],subjective["Student_Answer"])
+            subjective["sim"]=simalarity(subjective['answer'],subjective["Student_Answer"],_course)
             Quiz_Total_Marks=Quiz_Total_Marks+int(question['point'])
             Sub_quiz_Marks = Sub_quiz_Marks+Calculate_Papers_Process(subjective,"subj")
         print("Quiz Marks -> ",Sub_quiz_Marks)
 
-        
 
         for i in mcqs_quiz:
             _mquestion=Mcqs.objects.filter(mquestion=i['mquestion_id']).values('mquestion','manswer','point')[0]
@@ -852,7 +852,7 @@ def Calculate_Papers(_examid,req,_regno,_course):
             subjective["Student_Answer"]=i['answer']
             Per_keyword_Mark=[ i for i in question['keywords'].split(',') if i != ""]
             subjective["Per_keyword_Mark"]=question['point']/len(Per_keyword_Mark)
-            subjective["sim"]=simalarity(subjective['answer'],subjective["Student_Answer"])
+            subjective["sim"]=simalarity(subjective['answer'],subjective["Student_Answer"],_course)
             assignment_Total_Marks=assignment_Total_Marks+int(question['point'])
             Assignment_Marks = Assignment_Marks+Calculate_Papers_Process(subjective,"subj")
         print("Assignment Marks ->> ",Assignment_Marks)
@@ -860,12 +860,17 @@ def Calculate_Papers(_examid,req,_regno,_course):
         ResultStubject_create(_examid,req,_regno,_course,Assignment_Marks,assignment_Total_Marks)
             
 
-
-
-
-
-
-
+def synonym_sim(q1,q2):
+    first_word = wordnet.synsets(q1)
+    second_word = wordnet.synsets(q2)
+    for i in first_word:
+        for j in second_word:
+            sim=i.wup_similarity(j)
+            if sim:
+                if sim > 0.7:
+                    print('Similarity: '+str(sim),i,j)
+                    return True
+    return False
 
 def _NER(sent1,sent2):
     ner_found=0;
@@ -888,26 +893,45 @@ def _NER_MARKS(_ner,points):
 
 
 def Calculate_Papers_Process(data,req):
-    word2vec=0;jaccard_sim=0;Student_Answer=data['Student_Answer'];
-    sentence=False;error=0;keyword_marks=0;jaccard_sim_marks=0
+    word2vec=0;jaccard_sim=0;Student_Answer=data['Student_Answer']
+    sentence=False;error=0;keyword_marks=0;jaccard_sim_marks=0;compaire_answer_marks=0
 
     if req == "subj":
         word2vec=data['sim']['Word2vec_sim'];error=data['sim']['sen2']['error']
         jaccard_sim=jaccard_sim_marks=data['sim']['jaccard_sim']
 
         if data['keywords'] != "":
-            keywords= [re.sub("[^a-zA-z+$+\d]"," ", token.lower())  for token in (data['keywords']).split(',')] 
-            Answer_Keywords= [re.sub("[^a-zA-z+$+\d]"," ", token.lower())   for token in Student_Answer.split()]
-
+            keywords= list(set([re.sub("[^a-zA-z+$+\d]"," ", token.lower())  for token in (data['keywords']).split(',')])) 
+            Answer_Keywords= list(set([re.sub("[^a-zA-z+$+\d]"," ", token.lower())   for token in Student_Answer.split()]))
 
             for keyword in keywords:
                 if keyword != "":
-                    if keyword in Answer_Keywords:
-                        keyword_marks=keyword_marks+data['Per_keyword_Mark']
-            keyword_marks=(int(data['point'])-((data['sim']['sen2']['error']*data['Per_keyword_Mark'])*0.5))
-        else:
-            keyword_marks=(int(data['point'])-(data['sim']['sen2']['error']*0.5))
+                    for ans in Answer_Keywords:
+                        if keyword == ans or synonym_sim(keyword,ans):
+                            keyword_marks=keyword_marks+data['Per_keyword_Mark']
+
+
+        for keyword in data['sim']['clean_sen1']:
+            if keyword in data['sim']['clean_sen2']:
+                compaire_answer_marks=compaire_answer_marks+(int(data['point'])/len(data['sim']['clean_sen1']))
+
+        keyword_marks=((compaire_answer_marks+keyword_marks)/2)
+
+        print(keyword_marks)
+
+        if keyword_marks > 0:
+            keyword_marks=keyword_marks-((data['sim']['sen2']['error']*data['Per_keyword_Mark'])*0.25)
         
+        
+
+        if keyword_marks<0: keyword_marks=0
+        print(keyword_marks)
+        print(data['sim']['sen2']['error'])
+        print(data['sim']['sen2'])
+        print(data['Per_keyword_Mark'])
+        
+
+
         _ner=_NER(data['sim']['lingustic_features_sent1'],data['sim']['lingustic_features_sent2'])
 
         print("keyword_marks     -> "   ,   keyword_marks , " Empty-space will not be consider ")
@@ -921,7 +945,7 @@ def Calculate_Papers_Process(data,req):
             keyword_marks = keyword_marks * (70/100)
 
 
-        if keyword_marks <= (int(data['point'])*(60/100)):
+        if ((keyword_marks/int(data['point']))*100) <= (int(data['point'])*(60/100)):
             marks=_NER_MARKS(_ner,int(data['point']))
             if data['sim']['jaccard_sim']  > 0.7:  marks=marks+(int(data['point'])*15/100)
             if data['sim']['Word2vec_sim'] > 0.7:  marks=marks+(int(data['point'])*10/100)                           

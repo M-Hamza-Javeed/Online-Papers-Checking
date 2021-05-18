@@ -8,7 +8,7 @@ from .nlp import simalarity
 from django.conf import settings
 
 
-class OCR(APIView):
+class NLP(APIView):
     parser_classes = (MultiPartParser, FormParser)
     serializer_class=nlp
     
