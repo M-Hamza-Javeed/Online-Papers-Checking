@@ -7,11 +7,16 @@
 <p>Updates<i class="icon ion-android-download"></i></p></div>
 <div class="col-body" style="display: flex;flex-direction: row;justify-content: start;flex-flow: wrap;font-size: 20px;">
 <p>
+{% if head.dash_data.exam|length  != 0 %}
 Paper times
 {% for i in head.dash_data.exam %}
 <span style="margin:10px;">Date: {{i.date}} </span>
 <span style="margin:10px;">Time: {{i.time}} </span>
 {% endfor %}
+{% else %} 
+No Paper is Created
+{% endif %}
+
 </p>
 </div>
 <div class="col-fotter tomato-color"><p>View Details</p></div>
