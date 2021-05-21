@@ -17,12 +17,18 @@
 <div class="Form-Container">
   <div style="display: flex;justify-content: center;">
   <div class="inner-form-holder">
-   <div style="font-size:50px;color:#fff;display:flex;justify-content:center;">{{title}}</div>
+  <div style="font-size:50px;color:#fff;display:flex;justify-content:center;">{{title}}</div>
     <form action="" method="POST">
     {% csrf_token %}
-    <div class="inner"><input type="Text" placeholder="Enter Your RegNo" name="regno"></div>
-    <div class="inner"><input type="Text" placeholder="Password" name="password"></div>
-    <div class="inner"><input type="Submit" name='login_user' style="padding:0px;border:0px;width: 522px;font-size:20px;height:50px;background-color: #f0525e;color:#fff;" value="Login">
+    <div class="inner"><input type="Text" placeholder="Enter Your RegNo" name="regno"
+    oninvalid="this.setCustomValidity('Enter your Registration Number')"
+    onchange="this.setCustomValidity('')"
+    required /></div>
+    <div class="inner"><input type="Text" placeholder="Password" name="password" 
+    oninvalid="this.setCustomValidity('Enter your Password')"
+    onchange="this.setCustomValidity('')"
+    required /></div>
+    <div class="inner"><input type="Submit" name='login_user' style="padding:0px;border:0px;width: 522px;font-size:20px;height:50px;background-color: #f0525e;color:#fff;" value="Login" />
     </div>
     </form>
 	</div>

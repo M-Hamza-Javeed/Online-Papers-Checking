@@ -2,13 +2,26 @@
 
 <div class="Form-Container">
   <div class="inner-form-holder">
-   <div class="form-heading">SignUp</div>
+  <div class="form-heading">SignUp</div>
   <form method="POST" >
     {% csrf_token %}
-    <div class="inner"><input type="Text" placeholder="Name"  name="name" /></div>
-    <div class="inner"><input type="Text" placeholder="Email" name="email" /></div>
-    <div class="inner"><input type="Text" placeholder="Phone Number" name="phonenumber" /></div>
-    <div class="inner"><input type="Text" placeholder="Password"  name="password" /></div>
+    <div class="inner"><input type="Text" placeholder="Name"  name="name" required 
+    oninvalid="this.setCustomValidity('Enter your Name')"
+    onchange="this.setCustomValidity('')"
+    /></div>
+    <div class="inner"><input type="Text" placeholder="Email" name="email" 
+    pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" required 
+    oninvalid="this.setCustomValidity('Enter your Email Address')"
+    onchange="this.setCustomValidity('')"
+    /></div>
+    <div class="inner"><input type="Text" placeholder="Phone Number" min="6" max="12" 
+    oninvalid="this.setCustomValidity('Enter your Phonenumber min 6 char and max 12 char ')"
+    onchange="this.setCustomValidity('')"
+    name="phonenumber" pattern="\d*" required /></div>
+    <div class="inner"><input type="Text" placeholder="Password"  name="password" required 
+    oninvalid="this.setCustomValidity('Enter your Password')"
+    onchange="this.setCustomValidity('')"
+    /></div>
     <div class="inner"><input type="Submit" name="submit" class="form-btn" value="Submit" />
     </div>
     </form>

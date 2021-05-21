@@ -110,7 +110,7 @@
 
     function Submit(item) {
         var data = [];
-        for (var i = 0; i <= 4; i++) { data.push(item.parentElement.parentElement.cells[i].innerText); }
+        for (var i = 0; i <= 4; i++) { data.push(item.parentElement.parentElement.cells[i].innerText.replace('\n','')); }
         for (var i = 1; i <= 4; i++) { item.parentElement.parentElement.cells[i].contentEditable = false; }
         item.parentElement.children[0].style.display = ''; item.parentElement.children[1].style.display = 'none';
         console.log(data);

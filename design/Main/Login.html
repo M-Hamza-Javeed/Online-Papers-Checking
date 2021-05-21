@@ -2,11 +2,18 @@
 
 <div class="Form-Container">
   <div class="inner-form-holder">
-   <div class="form-heading" >Login</div>
+  <div class="form-heading" >Login</div>
   <form action=""  method="POST" >
     {% csrf_token %}
-    <div class="inner"><input type="Text" placeholder="Email" name="email" /></div>
-    <div class="inner"><input type="Text" placeholder="Password" name="password" /></div>
+    <div class="inner"><input type="Text" placeholder="Email" name="email" 
+      pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" 
+      oninvalid="this.setCustomValidity('Enter your Email Address')"
+      onchange="this.setCustomValidity('')"
+      required /></div>
+    <div class="inner"><input type="Text" placeholder="Password" name="password" 
+      oninvalid="this.setCustomValidity('Enter your Password')"
+      onchange="this.setCustomValidity('')"
+    required /></div>
     <div class="inner">
       <input type="Submit" name="Submit" 
       style="border: 0px;font-size: 22px;height:38px;background-color: #fff;color: #000;" value="Submit" />

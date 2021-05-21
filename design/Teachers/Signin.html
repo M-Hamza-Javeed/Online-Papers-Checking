@@ -20,8 +20,15 @@
   <div style="font-size:50px;color:#fff;display:flex;justify-content:center;">{{title}}</div>
     <form action="" method="POST">
     {% csrf_token %}
-    <div class="inner"><input type="Text" placeholder="Enter Email" name="email"></div>
-    <div class="inner"><input type="Text" placeholder="Enter Password" name="password"></div>
+    <div class="inner"><input type="Text" placeholder="Enter Email" name="email"
+      pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
+      oninvalid="this.setCustomValidity('Enter your Email Address')"
+      onchange="this.setCustomValidity('')" 
+      required /></div>
+    <div class="inner"><input type="Text" placeholder="Enter Password" name="password"
+      oninvalid="this.setCustomValidity('Enter your Password')"
+      onchange="this.setCustomValidity('')"
+    required /></div>
     <div class="inner"><input type="Submit" name='login_user' style="padding:0px;border:0px;width: 522px;font-size:20px;height:50px;background-color: #f0525e;color:#fff;" value="Login">
     </div>
     </form>
