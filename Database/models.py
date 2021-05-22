@@ -215,8 +215,8 @@ class StudentSubject(models.Model):
 
 class TeacherSubject(models.Model):
     name = models.CharField(db_column='Name', max_length=50)  
-    email = models.ForeignKey(Teacher,on_delete = models.CASCADE, db_column='Email')  
-    subject = models.ForeignKey(Courses,on_delete = models.CASCADE, db_column='Subject')  
+    email = models.ForeignKey(Teacher,on_delete = models.CASCADE,blank=False, default='',db_column='Email')  
+    subject = models.ForeignKey(Courses,on_delete = models.CASCADE,blank=False, default='', db_column='Subject')  
 
     class Meta:
         db_table = 'teacher_subject'

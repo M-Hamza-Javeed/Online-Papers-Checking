@@ -20,6 +20,7 @@ class Add_Course(forms.ModelForm):
     class Meta: 
         model = Courses 
         fields = "__all__"
+        
 
 class Assign_Course(forms.ModelForm): 
     class Meta: 

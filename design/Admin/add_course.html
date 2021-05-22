@@ -12,7 +12,9 @@
 
             <form method="POST" style="margin:20px">
                 {% csrf_token %}
-                <div class="inner"><input type="Text"  placeholder="Course" name="subject" /></div>
+                <div class="inner"><input type="Text"  placeholder="Course" name="subject" 
+                
+                required /></div>
                 <div class="inner">
                     <select style="width:520px;padding-left:17px;height:48px;border:0px;" name="credit_hours">
                         <option value="3">3 Credit Hours</option>

@@ -18,6 +18,11 @@ import os
 from nlp.nlp import simalarity
 from django.db.models import Q
 from nltk.corpus import wordnet     
+from nltk.corpus import stopwords
+from nltk.stem.wordnet import WordNetLemmatizer
+from nltk.tag import pos_tag
+from nltk import sent_tokenize
+import re , string
 
 
 def _get_result_subject_Admin():
@@ -893,6 +898,29 @@ def _NER_MARKS(_ner,points):
         return 0
 
 
+def remove_noise(tweet_tokens,stop_words):
+    cleaned_tokens = [];
+    for token, tag in pos_tag(tweet_tokens):
+        token = re.sub("[^a-zA-z+.+$+\d]"," ", token)
+
+        if len(token)<=1 : token='' 
+        
+        if tag.startswith("NN"): 
+            pos = 'n'
+        elif tag.startswith('VB'):
+            pos = 'v'
+        else:
+            pos = 'a'
+        
+        lemmatizer = WordNetLemmatizer()      
+        token = lemmatizer.lemmatize(token, pos)
+            
+        if len(token) > 0 and token not in string.punctuation and token.lower() not in stop_words:
+            cleaned_tokens.append(token.lower())
+
+    return cleaned_tokens
+
+
 def Calculate_Papers_Process(data,req):
     word2vec=0;jaccard_sim=0;Student_Answer=data['Student_Answer']
     sentence=False;error=0;keyword_marks=0;jaccard_sim_marks=0;compaire_answer_marks=0
@@ -900,6 +928,8 @@ def Calculate_Papers_Process(data,req):
     if req == "subj":
         word2vec=data['sim']['Word2vec_sim'];error=data['sim']['sen2']['error']
         jaccard_sim=jaccard_sim_marks=data['sim']['jaccard_sim']
+        sent1_keywords=remove_noise(data['sim']['sent1']['correct'][0].lower().split(),stopwords.words('english'))
+        sent2_keywords=remove_noise(data['sim']['sen2']['correct'][0].lower().split(),stopwords.words('english'))
 
         if data['keywords'] != "":
             keywords= list(set([re.sub("[^a-zA-z+$+\d]"," ", token.lower())  for token in (data['keywords']).split(',')])) 
@@ -912,9 +942,9 @@ def Calculate_Papers_Process(data,req):
                             keyword_marks=keyword_marks+data['Per_keyword_Mark']
 
 
-        for keyword in data['sim']['clean_sen1']:
-            if keyword in data['sim']['clean_sen2']:
-                compaire_answer_marks=compaire_answer_marks+(int(data['point'])/len(data['sim']['clean_sen1']))
+        for keyword in sent1_keywords:
+            if keyword in sent2_keywords:
+                compaire_answer_marks=compaire_answer_marks+(int(data['point'])/len(sent1_keywords))
 
         keyword_marks=((compaire_answer_marks+keyword_marks)/2)
 
@@ -922,8 +952,6 @@ def Calculate_Papers_Process(data,req):
 
         if keyword_marks > 0:
             keyword_marks=keyword_marks-((data['sim']['sen2']['error']*data['Per_keyword_Mark'])*0.25)
-        
-        
 
         if keyword_marks<0: keyword_marks=0
         print(keyword_marks)
@@ -932,21 +960,15 @@ def Calculate_Papers_Process(data,req):
         print(data['Per_keyword_Mark'])
         
 
-
         _ner=_NER(data['sim']['lingustic_features_sent1'],data['sim']['lingustic_features_sent2'])
-
-        print("keyword_marks     -> "   ,   keyword_marks , " Empty-space will not be consider ")
-        print("Answer_Keywords   -> "   ,   Answer_Keywords)
-        print("Question_keywords -> "   ,   keywords)
-        print("Per_keyword_Marks -> "   ,   data['Per_keyword_Mark'])
-
 
         if ((keyword_marks/int(data['point']))*100) <= (int(data['point'])*(60/100)):
             marks=_NER_MARKS(_ner,int(data['point']))
             if data['sim']['jaccard_sim']  > 0.7:  marks=marks+(int(data['point'])*15/100)
             if data['sim']['Word2vec_sim'] > 0.7:  marks=marks+(int(data['point'])*10/100)                           
             keyword_marks=keyword_marks+marks
-
+        
+        
         print("keyword_marks     -> "   ,   keyword_marks , " Empty-space will not be consider ")
         print("Answer_Keywords   -> "   ,   Answer_Keywords)
         print("Question_keywords -> "   ,   keywords)

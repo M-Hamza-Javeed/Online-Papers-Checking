@@ -6,11 +6,24 @@
         <div style="background-color:#000;">
             <form method="POST" style="margin:20px">
                 {% csrf_token %}
-                <div class="inner"><input type="Text" placeholder="Teacher Name" name="name" /></div>
-                <div class="inner"><input type="Text" placeholder="Teacher Email" name="email" /></div>
-                <div class="inner"><input type="Text" placeholder="Teacher Phone" name="phonenumber" /></div>
-                <div class="inner"><input type="Text" placeholder="Password" name="password" /></div>
-                <div class="inner"><input type="date" name="tdate" /></div>
+                <div class="inner"><input type="Text" placeholder="Teacher Name" name="name" 
+                required /></div>
+                <div class="inner"><input type="Text" placeholder="Teacher Email" name="email"
+                pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" 
+                oninvalid="this.setCustomValidity('Enter your Email Address')"
+                onchange="this.setCustomValidity('')"
+                required /></div>
+                <div class="inner"><input type="Text" minlength="6" pattern="\d*" maxlength="12" placeholder="Teacher Phone" name="phonenumber"
+                oninvalid="this.setCustomValidity('Enter your Phonenumber min 6 char and max 12 char ')"
+                onchange="this.setCustomValidity('')"
+                pattern="\d*"
+                required /></div>
+                <div class="inner"><input type="Text" minlength="5"  maxlength="12" placeholder="Password" name="password"
+                oninvalid="this.setCustomValidity('Password min Length is 5 and max length is 12')"
+                onchange="this.setCustomValidity('')"
+                required /></div>
+                <div class="inner"><input type="date" name="tdate" 
+                required /></div>
                 <div class="inner">
                     <input type="submit" class="papertype" name="Submit"
                         style="border: 0px;font-size: 22px;height:38px;background-color: #fff;color: #000;"
