@@ -13,6 +13,7 @@ print("Django by default not support CASCADE do we add manually on update and on
 
 
 
+'''//TODO@Kashif'''
 query = "ALTER TABLE `exam` DROP FOREIGN KEY `exam_Email_b632a88d_fk_teacher_Email`; ALTER TABLE `exam` ADD CONSTRAINT `exam_Email_b632a88d_fk_teacher_Email` FOREIGN KEY (`Email`) REFERENCES `teacher`(`Email`) ON DELETE CASCADE ON UPDATE CASCADE;"
 for i in query.split(';'):
     mycursor.execute(i)
