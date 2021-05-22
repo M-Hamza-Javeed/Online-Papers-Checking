@@ -743,6 +743,7 @@ def _process_form(request,regno):
 
 
 def ResultStubject_create(_id,_req,_regno,_course,_obtain_marks,_total_marks):
+    print(_id,_req,_regno,_course,_obtain_marks,_total_marks)
     if   _req == "paper":
         _percentage=(_obtain_marks/_total_marks)*100
         ResultStubject(regno=_regno,subject=_course,Examid=_id,uniqueid=None,
@@ -939,19 +940,21 @@ def Calculate_Papers_Process(data,req):
         print("Question_keywords -> "   ,   keywords)
         print("Per_keyword_Marks -> "   ,   data['Per_keyword_Mark'])
 
-        if data['sim']['stopwords']: 
-            keyword_marks = keyword_marks
-        else: 
-            keyword_marks = keyword_marks * (70/100)
-
 
         if ((keyword_marks/int(data['point']))*100) <= (int(data['point'])*(60/100)):
             marks=_NER_MARKS(_ner,int(data['point']))
             if data['sim']['jaccard_sim']  > 0.7:  marks=marks+(int(data['point'])*15/100)
             if data['sim']['Word2vec_sim'] > 0.7:  marks=marks+(int(data['point'])*10/100)                           
-            return keyword_marks+marks
-        else:
+            keyword_marks=keyword_marks+marks
+
+
+        if data['sim']['stopwords']: 
+            keyword_marks = keyword_marks
             return keyword_marks
+        else: 
+            keyword_marks = keyword_marks * (70/100)
+            return keyword_marks
+
 
 
     if req == "mcqs":
