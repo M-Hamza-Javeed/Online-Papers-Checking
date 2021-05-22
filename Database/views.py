@@ -947,6 +947,11 @@ def Calculate_Papers_Process(data,req):
             if data['sim']['Word2vec_sim'] > 0.7:  marks=marks+(int(data['point'])*10/100)                           
             keyword_marks=keyword_marks+marks
 
+        print("keyword_marks     -> "   ,   keyword_marks , " Empty-space will not be consider ")
+        print("Answer_Keywords   -> "   ,   Answer_Keywords)
+        print("Question_keywords -> "   ,   keywords)
+        print("Per_keyword_Marks -> "   ,   data['Per_keyword_Mark'])
+
 
         if data['sim']['stopwords']: 
             keyword_marks = keyword_marks
