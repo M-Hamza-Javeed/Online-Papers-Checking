@@ -8,7 +8,7 @@ from Database.models import Admin,Student,Teacher,Courses,TeacherSubject,\
         ExamStudentAnswer,ExamScanPaper,StudentAnswer,StudentMcqs
 import re
 from django.contrib import auth
-from datetime import date
+from datetime import date,datetime
 import uuid
 from ocr.tesseract import ExtractText
 import collections
@@ -24,6 +24,7 @@ from nltk.tag import pos_tag
 from nltk import sent_tokenize
 import re , string
 
+Paper_Start_time=None
 
 def _get_result_subject_Admin():
     _ResultStubject=ResultStubject.objects.filter(percentage__gte=50)
@@ -500,8 +501,10 @@ def ISForm_Submitted(_examid,req,_regno):
 
 
 def Generate_Forms(examid,req,regno):
-    
+
     if not ISForm_Submitted(examid,req,regno):
+        Paper_Start_time = datetime.now()
+        print(Paper_Start_time)
 
         if req == "papers": 
             exam=get_examid(examid);Paper=[];Mcqs=[];Subjective=[];
@@ -674,7 +677,7 @@ def student_assignments(_regno):
 def _process_form(request,regno):
     __subjective_not_upload=[];_subjective_upload=[];_data=[];req=request['req']
     [__subjective_not_upload.append(i) if i['type']=='type-not-upload' else _subjective_upload.append(i) for i in request['subjective']]
-    _mcqs=request['mcqs'];
+    _mcqs=request['mcqs'];print(Paper_Start_time)
     _regno=Student.objects.filter(regno=regno)[0]
     _course=Courses.objects.filter(subject=request['subject'])[0]
     
@@ -873,10 +876,12 @@ def synonym_sim(q1,q2):
         for j in second_word:
             sim=i.wup_similarity(j)
             if sim:
-                if sim > 0.7:
+                if sim > 0.9:
                     print('Similarity: '+str(sim),i,j)
                     return True
     return False
+
+
 
 def _NER(sent1,sent2):
     ner_found=0;
@@ -924,6 +929,7 @@ def remove_noise(tweet_tokens,stop_words):
 def Calculate_Papers_Process(data,req):
     word2vec=0;jaccard_sim=0;Student_Answer=data['Student_Answer']
     sentence=False;error=0;keyword_marks=0;jaccard_sim_marks=0;compaire_answer_marks=0
+    ispressent=False;
 
     if req == "subj":
         word2vec=data['sim']['Word2vec_sim'];error=data['sim']['sen2']['error']
@@ -939,12 +945,19 @@ def Calculate_Papers_Process(data,req):
                 if keyword != "":
                     for ans in Answer_Keywords:
                         if keyword == ans or synonym_sim(keyword,ans):
-                            keyword_marks=keyword_marks+data['Per_keyword_Mark']
+                            ispressent=True
+                    if ispressent:
+                        keyword_marks=keyword_marks+data['Per_keyword_Mark']
+                    ispressent=False
+            
+            print(keyword_marks)
 
 
         for keyword in sent1_keywords:
             if keyword in sent2_keywords:
                 compaire_answer_marks=compaire_answer_marks+(int(data['point'])/len(sent1_keywords))
+        
+        print(keyword_marks)
 
         keyword_marks=((compaire_answer_marks+keyword_marks)/2)
 
