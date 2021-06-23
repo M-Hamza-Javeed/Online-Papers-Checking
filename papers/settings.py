@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',
+    'models2puml'
 ]
 
 MIDDLEWARE = [
@@ -147,3 +149,8 @@ REST_FRAMEWORK = {
     ]
 }
 
+
+GRAPH_MODELS = {
+    'all_applications': True,
+    'group_models': True,
+}

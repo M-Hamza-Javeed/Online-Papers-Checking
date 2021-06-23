@@ -113,7 +113,7 @@ def loadModel(subj):
 
 
 def simalarity(sent1,sent2,*subj):
-    Word2Vec=0;jaccard=0;WordMover=0;doc_sim=0;_stopwords=False;
+    Word2Vec=0;jaccard=0;WordMover=0;doc_sim=0;_stopwords=False;_stopword=stopwords.words('english')
 
     sent1_token=sent_tokenize(sent1)
     sent2_token=sent_tokenize(sent2)
@@ -122,8 +122,8 @@ def simalarity(sent1,sent2,*subj):
     sent2_correct=process_text(sent2_token)
 
 
-    sen1=remove_noise(sent1_correct['correct'][0].split(),stopwords.words('english'))
-    sen2=remove_noise(sent2_correct['correct'][0].split(),stopwords.words('english'))
+    sen1=remove_noise(sent1_correct['correct'][0].split(),_stopword)
+    sen2=remove_noise(sent2_correct['correct'][0].split(),_stopword)
 
 
     try:
