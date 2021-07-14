@@ -13,3 +13,5 @@ Code
 2) python manage.py migrate
 3) python on_update.py
 4) python manage.py runserver
+
+![alt text](https://github.com/Logic-R/Online-Papers-Checking/blob/1ff9760c7b2cca8b239019034956cfe7a8fb7923/media/models/sad.png)
