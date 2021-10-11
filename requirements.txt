@@ -23,7 +23,7 @@ cymem==2.0.4
 Cython==0.29.14
 defusedxml==0.5.0
 dill==0.3.3
-Django==3.0.8
+Django==3.1.13
 django-multiforloop==0.2.1
 django-storages==1.10.1
 djangorestframework==3.11.0
