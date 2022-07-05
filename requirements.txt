@@ -74,7 +74,7 @@ proxybroker==0.3.2
 psycopg2==2.7.7
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
-pycares==3.1.1
+pycares==4.2.0
 pycparser==2.20
 pydantic==1.7.3
 pyemd==0.5.1
